@@ -9,7 +9,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 HINSTANCE hInst;
 int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
-	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone"))==NULL)
+	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone")))
 		if(GetLastError()==ERROR_ALREADY_EXISTS)
 			return 0;
 
@@ -58,12 +58,12 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 			hWnd=GetParent(hWnd);
 		if(IsWindow(hWnd)&&((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD)==0))
 		{
+			BYTE bAlpha=255;
 			if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_LAYERED)==0)
 			{
 				if(((short)HIWORD(phs->mouseData))>0)
 					return 1;
 				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
-				BYTE bAlpha=0;
 				if(GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
 				{
 					if(bAlpha!=255)
@@ -73,8 +73,7 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 					SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
 				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 			}
-			BYTE bAlpha=0;
-			if(GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
+			GetLayeredWindowAttributes(hWnd,0,&bAlpha,0);
 			{
 				if(((short)HIWORD(phs->mouseData))<0)
 				{
@@ -87,18 +86,28 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 						bAlpha+=10;
 					else
 					{
-						SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+						bAlpha=255;
+					//	SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
 //						::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
 //						RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-						return 1;
 					}
 				}
 				
 			}
-			else
-				SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
-			
+/*			else
+			{
+				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);	
+			}
+	*/		
 			SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);
+
+			
+			if(!GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
+			{
+				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+			}
 			return 1;
 		}
 	}
