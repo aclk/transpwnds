@@ -54,62 +54,67 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	{
 		PMSLLHOOKSTRUCT phs=(PMSLLHOOKSTRUCT)lParam;
 		HWND hWnd=::WindowFromPoint(phs->pt);
-		while((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD)&&IsWindow(hWnd))
-			hWnd=GetParent(hWnd);
-		if(IsWindow(hWnd)&&((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD)==0))
-		{
-			BYTE bAlpha=255;
-			if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_LAYERED)==0)
+			while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
+				hWnd=GetParent(hWnd);
+			if(IsWindow(hWnd)&&(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))==0))
 			{
-				if(((short)HIWORD(phs->mouseData))>0)
-					return 1;
-				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
-				if(GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
+				static TCHAR szText[255];
+				GetClassName(hWnd,szText,255);
+				if(_tcscmp(szText,_T("Progman"))==0)
+					return CallNextHookEx(hhMouse,nCode,wParam,lParam);
+
+				BYTE bAlpha=255;
+				if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_LAYERED)==0)
 				{
-					if(bAlpha!=255)
+					if(((short)HIWORD(phs->mouseData))>0)
+						return CallNextHookEx(hhMouse,nCode,wParam,lParam);
+					::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
+					if(GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
+					{
+						if(bAlpha!=255)
+							SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+					}
+					else
 						SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+					RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 				}
-				else
-					SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
-				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-			}
-			GetLayeredWindowAttributes(hWnd,0,&bAlpha,0);
-			{
-				if(((short)HIWORD(phs->mouseData))<0)
+				GetLayeredWindowAttributes(hWnd,0,&bAlpha,0);
 				{
-					if(bAlpha>100)
-						bAlpha-=10;
-				}
-				else
-				{
-					if(bAlpha<245)
-						bAlpha+=10;
+					if(((short)HIWORD(phs->mouseData))<0)
+					{
+						if(bAlpha>100)
+							bAlpha-=10;
+					}
 					else
 					{
-						bAlpha=255;
-					//	SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
-//						::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
-//						RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+						if(bAlpha<245)
+							bAlpha+=10;
+						else
+						{
+							bAlpha=255;
+						//	SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+	//						::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+	//						RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+						}
 					}
+					
 				}
-				
-			}
-/*			else
-			{
-				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
-				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);	
-			}
-	*/		
-			SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);
+	/*			else
+				{
+					::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+					RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);	
+				}
+		*/		
+				SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);
 
-			
-			if(!GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
-			{
-				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
-				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+				
+				if(!GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
+				{
+					::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+					RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+				}
+				return 1;
 			}
-			return 1;
-		}
 	}
 	return CallNextHookEx(hhMouse,nCode,wParam,lParam);
 }
