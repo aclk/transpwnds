@@ -3,18 +3,35 @@
 #include <tchar.h>
 #include <assert.h>
 #include "resource.h"
+#include <map>
 
 LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
 
-HINSTANCE hInst;
+///\brief структура, содержащая информацию об окне
+///\param bAlpha - альфаканал
+///\param fAlpha - TRUE,если окну был присвоен стиль WS_EX_LAYERED 
+///\param fTopMost - TRUE,если окну был присвоен стиль WS_EX_TOPMOST 
+typedef struct tagWndInfo
+{
+	BYTE bAlpha;
+	BOOL fAlpha;
+	BOOL fTopMost;
+}WNDINFO,*LPWNDINFO;
+///\brief мап окно - информация о нём
+std::map<HWND,WNDINFO> g_mapWndInfo;
+///\brief хендл хука
+HHOOK g_hhMouse;
+
+
+HINSTANCE g_hInst;
 int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
-	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone"))==NULL)
+	//синглтон
+	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone")))
 		if(GetLastError()==ERROR_ALREADY_EXISTS)
 			return 0;
 
-	hInst=hInstance;
-
+	g_hInst=hInstance;
 	WNDCLASS wc;
 	wc.style = CS_HREDRAW | CS_VREDRAW; 
 	wc.lpfnWndProc = (WNDPROC) WindowProc; 
@@ -45,68 +62,107 @@ int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLin
 	}
 	return 0;
 }
-
-HHOOK hhMouse;
-
+///\brief функция преднозначена для popup родителя
+///\param hWnd - хендл окна на родителе, или определенной иерархии дочерних окон или самого popup
+///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
+HWND GetPopup(HWND hWnd)
+{
+	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
+		hWnd=GetParent(hWnd);
+	if(!hWnd)
+		return NULL;		
+	static TCHAR szText[255];
+	GetClassName(hWnd,szText,255);
+	_tcslwr_s(szText,255);
+	if(_tcscmp(szText,_T("progman"))==0)
+		return NULL;
+	return hWnd;
+}
+///\brief процедура мышинного хука
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 {
 	if((wParam==WM_MOUSEWHEEL)&&(HIWORD(GetKeyState(VK_MENU))))
 	{
 		PMSLLHOOKSTRUCT phs=(PMSLLHOOKSTRUCT)lParam;
 		HWND hWnd=::WindowFromPoint(phs->pt);
-		while((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD)&&IsWindow(hWnd))
-			hWnd=GetParent(hWnd);
-		if(IsWindow(hWnd)&&((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD)==0))
+		if((hWnd=GetPopup(hWnd))!=0)
 		{
 			if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_LAYERED)==0)
-				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
-			BYTE bAlpha=0;
-			if(GetLayeredWindowAttributes(hWnd,0,&bAlpha,0))
 			{
-				if(((short)HIWORD(phs->mouseData))<0)
-				{
-					if(bAlpha>100)
-						bAlpha-=10;
-				}
-				else
-				{
-					if(bAlpha<245)
-						bAlpha+=10;
-					else
-					{
-						bAlpha=255;
-//						SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);
-//						::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
-//						RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-//						return 1;
-					}
-				}
-				SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);
+				if(((short)HIWORD(phs->mouseData))>0)
+					return CallNextHookEx(g_hhMouse,nCode,wParam,lParam);
+				::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
+				WNDINFO wi={0};
+				wi.bAlpha=255;
+				wi.fAlpha=TRUE;
+				g_mapWndInfo[hWnd]=wi;
+				SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+				RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+				return 1;
 			}
 			else
-				SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
+			{
+				std::map<HWND,WNDINFO>::const_iterator iterItem=g_mapWndInfo.find(hWnd);
+				if((iterItem._Mynode()->_Myval.first!=hWnd)||(!iterItem._Mynode()->_Myval.second.fAlpha))
+					return 1;				
+			}
+			BYTE bAlpha=g_mapWndInfo[hWnd].bAlpha;
+			if(((short)HIWORD(phs->mouseData))<0)
+			{
+				if(bAlpha>100)
+					bAlpha-=10;
+			}
+			else
+			{
+				if(bAlpha<=245)
+					bAlpha+=10;
+			}			
+			SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);		
+			g_mapWndInfo[hWnd].bAlpha=bAlpha;
 			return 1;
 		}
 	}
-	return CallNextHookEx(hhMouse,nCode,wParam,lParam);
+	if((wParam==WM_LBUTTONDOWN)&&(HIWORD(GetKeyState(VK_MENU)))&&(HIWORD(GetKeyState(VK_CONTROL))))
+	{
+		PMSLLHOOKSTRUCT phs=(PMSLLHOOKSTRUCT)lParam;
+		HWND hWnd=::WindowFromPoint(phs->pt);
+		if((hWnd=GetPopup(hWnd))!=0)
+			if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_TOPMOST)==0)
+			{
+				std::map<HWND,WNDINFO>::const_iterator iterItem=g_mapWndInfo.find(hWnd);
+				if((iterItem._Mynode()->_Myval.first==hWnd))
+					iterItem._Mynode()->_Myval.second.fTopMost=TRUE;
+				else
+				{
+					WNDINFO wi={0};
+					wi.fTopMost=TRUE;
+					g_mapWndInfo[hWnd]=wi;
+				}
+				::SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+				return 1;						
+			}
+			else
+			{
+				std::map<HWND,WNDINFO>::const_iterator iterItem=g_mapWndInfo.find(hWnd);
+				if((iterItem._Mynode()->_Myval.first==hWnd))
+				{
+					iterItem._Mynode()->_Myval.second.fTopMost=FALSE;
+					::SetWindowPos(hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+				}
+			}
+
+	}
+	return CallNextHookEx(g_hhMouse,nCode,wParam,lParam);
 }
 
-enum 
-{
-	IDM_ENABLE=1001,
-	IDM_DISABLE,
-	IDM_AUTORUN,
-	IDM_QUIT,
-	
-	NIM_MESSAGE=WM_APP+1,
-};
-
+///\brief изменяет статус автозагрузки
+///\param fAdd - TRUE,если надо добавить программу в автозагрузку, FALSE, если убрать
 void AutoRun(BOOL fAdd)
 {
 	HKEY hKey;
 	LPCTSTR szValName=_T("TranspWnds");
 	TCHAR szFilePath[0xffff];
-	::GetModuleFileName(hInst,szFilePath,0xffff);
+	::GetModuleFileName(g_hInst,szFilePath,0xffff);
 	TCHAR szKeyName[]=_T("Software\\Microsoft\\Windows\\CurrentVersion\\Run");
 	LONG lResult=RegOpenKeyEx(HKEY_CURRENT_USER,szKeyName,0,(fAdd)?KEY_WRITE:KEY_SET_VALUE,&hKey);
 	if(lResult==ERROR_SUCCESS)
@@ -118,6 +174,8 @@ void AutoRun(BOOL fAdd)
 			lResult=RegSetValueEx(hKey,szValName,0,REG_SZ,
 				(BYTE*)szFilePath,(WORD)_tcslen(szFilePath)*sizeof(szFilePath[0]));
 }
+///\brief возвращает статус автозагрузки
+///\return true, если прграмма в автозагрузке, иначе false
 bool IsAutoRun()
 {
 	HKEY hKey;
@@ -129,6 +187,8 @@ bool IsAutoRun()
 	for(DWORD i=0;;++i)
 	{
 		DWORD dwSize=0xffff;
+		//RegEnumValue сделан потому, что у меня отсутвует RegGetValue в Advapi32.dll. 
+		//причины не знаю
 		lResult=RegEnumValue(hKey,i++,szValNameRet,&dwSize,0,0,0,0);
 		if(lResult==ERROR_SUCCESS)
 		{
@@ -144,7 +204,17 @@ bool IsAutoRun()
 	::RegCloseKey(hKey);	
 	return fFind;
 }
-
+///\brief перечисление оконных собщений
+enum 
+{
+	IDM_ENABLE=1001,
+	IDM_DISABLE,
+	IDM_RESTORRE,
+	IDM_AUTORUN,
+	IDM_QUIT,	
+	NIM_MESSAGE=WM_APP+1,
+};
+///\brief оконная функция
 LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
 	static HMENU hPupupMenu=NULL;
@@ -157,22 +227,31 @@ LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 			hPupupMenu=::CreatePopupMenu();
 			::AppendMenu(hPupupMenu, MF_GRAYED|MF_DISABLED|MF_BYCOMMAND, IDM_ENABLE, _T("Enable"));
 			::AppendMenu(hPupupMenu, MF_BYCOMMAND, IDM_DISABLE, _T("Disable"));
+			::AppendMenu(hPupupMenu, MF_BYCOMMAND, IDM_RESTORRE, _T("Restore"));			
 			::AppendMenu(hPupupMenu, ((IsAutoRun())?MF_CHECKED:0)|MF_BYCOMMAND, IDM_AUTORUN, _T("AutoRun"));			
 			::AppendMenu(hPupupMenu, MF_BYCOMMAND, IDM_QUIT, _T("Quit"));
 			
 			niData.cbSize=sizeof(niData);
 			niData.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;
 			niData.hWnd=hWnd;
-			niData.hIcon=(HICON)LoadImage(hInst,MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR);
+			niData.hIcon=(HICON)LoadImage(g_hInst,MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR);
 			if(niData.hIcon==NULL)
 				::DestroyWindow(hWnd);
 			_tcscpy_s(niData.szTip,64,_T("TranspWnds"));
 			niData.uCallbackMessage=NIM_MESSAGE;
 			niData.uID=NIM_MESSAGE;
 			Shell_NotifyIcon(NIM_ADD,&niData);
-			hhMouse=SetWindowsHookEx(WH_MOUSE_LL,MouseProc,hInst,0);
+			g_hhMouse=SetWindowsHookEx(WH_MOUSE_LL,MouseProc,g_hInst,0);
+
+			//задается для проверки существавания окон в мапе
+			SetTimer(hWnd,0,60000,NULL);
 			break;
 		}
+	case WM_TIMER:
+		for(std::map<HWND,WNDINFO>::iterator i=g_mapWndInfo.begin();i!=g_mapWndInfo.end();i++)
+			if(!IsWindow(i->first))
+				g_mapWndInfo.erase(i);
+		break;
 	case NIM_MESSAGE:
 		{
 			if((lParam==WM_LBUTTONDOWN)||(lParam==WM_RBUTTONDOWN))
@@ -191,25 +270,38 @@ LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 			switch(LOWORD(wParam))
 			{
 			case IDM_ENABLE:
-				{
-					hhMouse=SetWindowsHookEx(WH_MOUSE_LL,MouseProc,hInst,0);
-					mii.cbSize=sizeof(MENUITEMINFO);
-					mii.fMask=MIIM_STATE;
-					mii.fState=MFS_GRAYED|MFS_DISABLED;
-					SetMenuItemInfo(hPupupMenu,IDM_ENABLE,FALSE,&mii);
-					mii.fState=MFS_ENABLED;
-					SetMenuItemInfo(hPupupMenu,IDM_DISABLE,FALSE,&mii);
-					break;
-				}
+				g_hhMouse=SetWindowsHookEx(WH_MOUSE_LL,MouseProc,g_hInst,0);
+				mii.cbSize=sizeof(MENUITEMINFO);
+				mii.fMask=MIIM_STATE;
+				mii.fState=MFS_GRAYED|MFS_DISABLED;
+				SetMenuItemInfo(hPupupMenu,IDM_ENABLE,FALSE,&mii);
+				mii.fState=MFS_ENABLED;
+				SetMenuItemInfo(hPupupMenu,IDM_DISABLE,FALSE,&mii);
+				break;
 			case IDM_DISABLE:
-				UnhookWindowsHookEx(hhMouse);
+				UnhookWindowsHookEx(g_hhMouse);
 				mii.cbSize=sizeof(MENUITEMINFO);
 				mii.fMask=MIIM_STATE;
 				mii.fState=MFS_GRAYED|MFS_DISABLED;
 				SetMenuItemInfo(hPupupMenu,IDM_DISABLE,FALSE,&mii);
 				mii.fState=MFS_ENABLED;
 				SetMenuItemInfo(hPupupMenu,IDM_ENABLE,FALSE,&mii);
-				hhMouse=NULL;
+				g_hhMouse=NULL;
+				break;
+			case IDM_RESTORRE:
+				for(std::map<HWND,WNDINFO>::iterator i=g_mapWndInfo.begin();i!=g_mapWndInfo.end();i++)
+					if(IsWindow(i->first))
+					{
+						if(i->second.fAlpha)
+						{
+							SetLayeredWindowAttributes(i->first,0,255,LWA_ALPHA);
+							::SetWindowLong(i->first,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+							RedrawWindow(i->first,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+						}
+						if(i->second.fTopMost)
+							::SetWindowPos(i->first,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+					}
+					g_mapWndInfo.clear();
 				break;
 			case IDM_AUTORUN:
 				{
@@ -228,8 +320,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 			break;
 		}
 	case WM_DESTROY:
-		if(hhMouse)
-			UnhookWindowsHookEx(hhMouse);
+		if(g_hhMouse)
+			UnhookWindowsHookEx(g_hhMouse);
 		Shell_NotifyIcon(NIM_DELETE,&niData);
 		::PostQuitMessage(0);
 		break;
