@@ -175,7 +175,19 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\App.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\MouseHook.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\WorkWnd.cpp"
 				>
 			</File>
 		</Filter>
@@ -185,7 +197,19 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\App.h"
+				>
+			</File>
+			<File
+				RelativePath=".\MouseHook.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WorkWnd.h"
 				>
 			</File>
 		</Filter>
@@ -205,5 +229,9 @@
 		</Filter>
 	</Files>
 	<Globals>
+		<Global
+			Name="RESOURCE_FILE"
+			Value="TranspWnds.rc"
+		/>
 	</Globals>
 </VisualStudioProject>
