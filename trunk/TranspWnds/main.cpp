@@ -24,7 +24,7 @@ HHOOK g_hhMouse;
 
 
 HINSTANCE g_hInst;
-int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
+/*int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
 	//синглтон
 	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone")))
@@ -62,6 +62,7 @@ int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLin
 	}
 	return 0;
 }
+*/
 ///\brief функция преднозначена для popup родителя
 ///\param hWnd - хендл окна на родителе, или определенной иерархии дочерних окон или самого popup
 ///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
