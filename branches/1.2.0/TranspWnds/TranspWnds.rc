@@ -62,8 +62,8 @@ IDI_MAINICON            ICON                    "Win32Wiz.ico"
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,0,0,1
- PRODUCTVERSION 1,0,0,1
+ FILEVERSION 1,2,0,1
+ PRODUCTVERSION 1,2,0,1
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -80,18 +80,33 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "UncleLab"
             VALUE "FileDescription", "TranspWn"
-            VALUE "FileVersion", "1, 0, 0, 1"
+            VALUE "FileVersion", "1, 2, 0, 1"
             VALUE "InternalName", "TranspWn"
             VALUE "LegalCopyright", "Copyright (C) 2008"
             VALUE "OriginalFilename", "TranspWn"
             VALUE "ProductName", " TranspWn"
-            VALUE "ProductVersion", "1, 0, 0, 1"
+            VALUE "ProductVersion", "1, 2, 0, 1"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
         VALUE "Translation", 0x419, 1200
     END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_ENABLE         "Enable"
+    IDS_MENU_DISABLE        "Disable"
+    IDS_MENU_RESTORE        "Restore"
+    IDS_MENU_QUIT           "Quit"
+    IDS_APP_NAME            "TranspWnds"
 END
 
 #endif    // Russian resources
