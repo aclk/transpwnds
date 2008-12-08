@@ -70,6 +70,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -145,6 +146,7 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				AdditionalManifestFiles="manifest.xml"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -187,6 +189,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PropHotKeys.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PropSheetOptions.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PropSystem.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WorkWnd.cpp"
 				>
 			</File>
@@ -202,6 +216,18 @@
 			</File>
 			<File
 				RelativePath=".\Hook.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropHotKeys.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropSheetOptions.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropSystem.h"
 				>
 			</File>
 			<File
@@ -227,6 +253,10 @@
 				>
 			</File>
 		</Filter>
+		<File
+			RelativePath=".\manifest.xml"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
