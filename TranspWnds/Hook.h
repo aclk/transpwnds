@@ -1,9 +1,25 @@
 #pragma once
+
 #include <windows.h>
 #include <map>
 
+typedef struct tagHotKeyInfo
+{
+	bool IsHotKey(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct);
+	BOOL m_fAlt;
+	BOOL m_fCtrl;
+	BOOL m_fShift;
+	BOOL m_fWin;
+	UINT m_uMsg;
+	tagHotKeyInfo& operator=(tagHotKeyInfo& HotKeyInfo);
+}HOTKEYINFO,*LPHOTKEYINFO;
 
-
+enum enHotKeyOperations
+{
+	hkoTransp,
+	hkoTopMost,
+	hkoCount
+};
 
 class CHook
 {
@@ -22,6 +38,11 @@ public:
 	///\brief мап окно - информация о нём
 	std::map<HWND,WNDINFO> m_mapWndInfo;
 
+
+	HOTKEYINFO m_arHotKeyInfo[hkoCount];
+
+	BYTE m_bMinTranspVal;
+	BYTE m_bTranspStep;
 public:
 	CHook(void);
 	~CHook(void);
@@ -31,4 +52,7 @@ public:
 	void Restore();
 
 	static CHook* GetHook();
+public:
+	LRESULT ProcessTransp(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
+	LRESULT ProcessTopMost(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 };
