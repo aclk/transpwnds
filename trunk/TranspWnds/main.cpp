@@ -24,7 +24,8 @@ HHOOK g_hhMouse;
 
 
 HINSTANCE g_hInst;
-/*int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
+/*
+int __stdcall WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine,int nCmdShow)
 {
 	//синглтон
 	if(CreateMutex(NULL,FALSE,_T("TranspWndSinletone")))
@@ -63,6 +64,7 @@ HINSTANCE g_hInst;
 	return 0;
 }
 */
+/*
 ///\brief функция преднозначена для popup родителя
 ///\param hWnd - хендл окна на родителе, или определенной иерархии дочерних окон или самого popup
 ///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
@@ -78,7 +80,7 @@ HWND GetPopup(HWND hWnd)
 	if(_tcscmp(szText,_T("progman"))==0)
 		return NULL;
 	return hWnd;
-}
+}*//*
 ///\brief процедура мышинного хука
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 {
@@ -155,7 +157,7 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	}
 	return CallNextHookEx(g_hhMouse,nCode,wParam,lParam);
 }
-
+*/
 ///\brief изменяет статус автозагрузки
 ///\param fAdd - TRUE,если надо добавить программу в автозагрузку, FALSE, если убрать
 void AutoRun(BOOL fAdd)
@@ -216,6 +218,7 @@ enum
 	NIM_MESSAGE=WM_APP+1,
 };
 ///\brief оконная функция
+/*
 LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 {
 	static HMENU hPupupMenu=NULL;
@@ -329,3 +332,4 @@ LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
 	}
 	return DefWindowProc(hWnd,uMsg,wParam,lParam);
 }
+*/

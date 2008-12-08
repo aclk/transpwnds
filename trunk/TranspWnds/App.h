@@ -6,6 +6,5 @@ class CApp :
 public:
 	CApp(void);
 	~CApp(void);
-protected:
 	BOOL InitInstance();
 };
