@@ -26,6 +26,11 @@ CWorkWnd::~CWorkWnd(void)
 
 LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 {
+	HICON hIcon=(HICON)::LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),
+		IMAGE_ICON,0,0,LR_DEFAULTSIZE);
+	SetIcon(hIcon,TRUE);
+
+
 	m_Menu.CreatePopupMenu();
 	m_Menu.AppendMenu(MF_GRAYED|MF_DISABLED|MF_BYCOMMAND,IDM_ENABLE,CULStrTable(IDS_MENU_ENABLE));
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_DISABLE,CULStrTable(IDS_MENU_DISABLE));
