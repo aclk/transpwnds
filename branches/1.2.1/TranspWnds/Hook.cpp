@@ -11,19 +11,18 @@ bool tagHotKeyInfo::IsHotKey(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 {
 	if(m_uMsg==uMsg)
 	{
-		if(m_fAlt)
-			if(!HIWORD(GetKeyState(VK_MENU)))
+		BOOL fKeyState=HIWORD(GetKeyState(VK_MENU));
+		if((m_fAlt&&!fKeyState)||(!m_fAlt&&fKeyState))
 				return false;
-		if(m_fCtrl)
-			if(!HIWORD(GetKeyState(VK_CONTROL)))
+		fKeyState=HIWORD(GetKeyState(VK_CONTROL));
+		if((m_fCtrl&&!fKeyState)||(!m_fCtrl&&fKeyState))
 				return false;
-		if(m_fShift)
-			if(!HIWORD(GetKeyState(VK_SHIFT)))
+		fKeyState=HIWORD(GetKeyState(VK_SHIFT));
+		if((m_fShift&&!fKeyState)||(!m_fShift&&fKeyState))
 				return false;
-		if(m_fWin)
-			if(!(HIWORD(GetKeyState(VK_LWIN))||HIWORD(GetKeyState(VK_RWIN))))
-				return false;
-				
+		fKeyState=HIWORD(GetKeyState(VK_LWIN))||HIWORD(GetKeyState(VK_RWIN));
+		if((m_fWin&&!fKeyState)||(!m_fWin&&fKeyState))
+				return false;			
 		return true;
 	}
 	else
