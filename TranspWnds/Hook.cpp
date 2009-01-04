@@ -11,19 +11,18 @@ bool tagHotKeyInfo::IsHotKey(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 {
 	if(m_uMsg==uMsg)
 	{
-		if(m_fAlt)
-			if(!HIWORD(GetKeyState(VK_MENU)))
+		BOOL fKeyState=HIWORD(GetKeyState(VK_MENU));
+		if((m_fAlt&&!fKeyState)||(!m_fAlt&&fKeyState))
 				return false;
-		if(m_fCtrl)
-			if(!HIWORD(GetKeyState(VK_CONTROL)))
+		fKeyState=HIWORD(GetKeyState(VK_CONTROL));
+		if((m_fCtrl&&!fKeyState)||(!m_fCtrl&&fKeyState))
 				return false;
-		if(m_fShift)
-			if(!HIWORD(GetKeyState(VK_SHIFT)))
+		fKeyState=HIWORD(GetKeyState(VK_SHIFT));
+		if((m_fShift&&!fKeyState)||(!m_fShift&&fKeyState))
 				return false;
-		if(m_fWin)
-			if(!(HIWORD(GetKeyState(VK_LWIN))||HIWORD(GetKeyState(VK_RWIN))))
-				return false;
-				
+		fKeyState=HIWORD(GetKeyState(VK_LWIN))||HIWORD(GetKeyState(VK_RWIN));
+		if((m_fWin&&!fKeyState)||(!m_fWin&&fKeyState))
+				return false;			
 		return true;
 	}
 	else
@@ -113,11 +112,9 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	lRes=theHook.ProcessTopMost((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
 	if(lRes)
 		return lRes;
-
-	if((wParam==WM_LBUTTONDOWN)&&(HIWORD(GetKeyState(VK_MENU)))&&(HIWORD(GetKeyState(VK_CONTROL))))
-	{
-
-	}
+	lRes=theHook.ProcessMoveWnd((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
+	if(lRes)
+		return lRes;
 	return CallNextHookEx(theHook.m_hMouse,nCode,wParam,lParam);
 }
 LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
@@ -197,3 +194,45 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	}
 	return 1;
 }
+
+LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
+{
+	static bool fStartMoveWnd=false;
+	static POINT ptStart={0,0};
+	static HWND hWnd=NULL;
+
+	if(fStartMoveWnd&&(uMsg==m_arHotKeyInfo[hkoMoveWnd].m_uMsg1))
+	{
+		RECT rc;
+		::GetWindowRect(hWnd,&rc);
+		int nWidth=rc.right-rc.left;
+		int nHeight=rc.bottom-rc.top;
+		rc.left+=lpMouseHookStruct->pt.x-ptStart.x;
+		rc.top+=lpMouseHookStruct->pt.y-ptStart.y;
+		::MoveWindow(hWnd,rc.left,rc.top,nWidth,nHeight,TRUE);
+		ptStart.x=lpMouseHookStruct->pt.x;
+		ptStart.y=lpMouseHookStruct->pt.y;
+	}
+	else
+		fStartMoveWnd=false;
+	
+	if(uMsg==m_arHotKeyInfo[hkoMoveWnd].m_uMsg2)
+	{
+		fStartMoveWnd=false;
+		return 0;
+	}
+
+	if(!m_arHotKeyInfo[hkoMoveWnd].IsHotKey(uMsg,lpMouseHookStruct))
+		return 0;
+	hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
+	if((hWnd=GetPopup(hWnd))==0)
+		return 0;
+	fStartMoveWnd=true;
+	ptStart=lpMouseHookStruct->pt;
+	return 1;
+}
+
+
+	
+
+

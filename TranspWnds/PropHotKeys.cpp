@@ -33,22 +33,47 @@ LRESULT CPropHotKeys::OnInitDialog(WPARAM w,LPARAM l)
 	SendDlgItemMessage(IDC_CHECK_TOPMOST_WIN,BM_SETCHECK,
 		m_arHotkey[hkoTopMost].m_fWin,0);
 
-	CULComboBox cb;
-	cb.Attach(GetDlgItem(IDC_COMBO_TOPMOST_MSG));
-	int nItem=cb.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_LBTN));
-	cb.SetItemData(nItem,WM_LBUTTONDOWN);
-	nItem=cb.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_RBTN));
-	cb.SetItemData(nItem,WM_RBUTTONDOWN);
-	nItem=cb.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
-	cb.SetItemData(nItem,WM_MBUTTONDOWN);
-	for(int i=0;i<cb.GetCount();++i)
-		if(m_arHotkey[hkoTopMost].m_uMsg==cb.GetItemData(i))
+	CULComboBox cbTopMost;
+	cbTopMost.Attach(GetDlgItem(IDC_COMBO_TOPMOST_MSG));
+	int nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_LBTN));
+	cbTopMost.SetItemData(nItem,WM_LBUTTONDOWN);
+	nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_RBTN));
+	cbTopMost.SetItemData(nItem,WM_RBUTTONDOWN);
+	nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
+	cbTopMost.SetItemData(nItem,WM_MBUTTONDOWN);
+	for(int i=0;i<cbTopMost.GetCount();++i)
+		if(m_arHotkey[hkoTopMost].m_uMsg==cbTopMost.GetItemData(i))
 		{
-			cb.SetCurSel(i);
+			cbTopMost.SetCurSel(i);
 			break;
 		}
-	cb.Detach();
+	cbTopMost.Detach();
+	//инициализируем горячие клавиши для move
+	SendDlgItemMessage(IDC_CHECK_MOVE_ALT,BM_SETCHECK,
+		m_arHotkey[hkoMoveWnd].m_fAlt,0);
+	SendDlgItemMessage(IDC_CHECK_MOVE_CTRL,BM_SETCHECK,
+		m_arHotkey[hkoMoveWnd].m_fCtrl,0);
+	SendDlgItemMessage(IDC_CHECK_MOVE_SHIFT,BM_SETCHECK,
+		m_arHotkey[hkoMoveWnd].m_fShift,0);
+	SendDlgItemMessage(IDC_CHECK_MOVE_WIN,BM_SETCHECK,
+		m_arHotkey[hkoMoveWnd].m_fWin,0);
 
+	CULComboBox cbMove;
+	cbMove.Attach(GetDlgItem(IDC_COMBO_MOVE_MSG));
+	nItem=cbMove.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_LBTN));
+	cbMove.SetItemData(nItem,WM_LBUTTONDOWN);
+	nItem=cbMove.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_RBTN));
+	cbMove.SetItemData(nItem,WM_RBUTTONDOWN);
+	nItem=cbMove.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
+	cbMove.SetItemData(nItem,WM_MBUTTONDOWN);
+	for(int i=0;i<cbMove.GetCount();++i)
+		if(m_arHotkey[hkoMoveWnd].m_uMsg==cbMove.GetItemData(i))
+		{
+			cbMove.SetCurSel(i);
+			break;
+		}
+	cbMove.Detach();
+	
 	return CULPropPage::OnInitDialog(w,l);
 }
 
@@ -86,10 +111,34 @@ LRESULT CPropHotKeys::OnApply(BYTE nReturn)
 		BM_GETCHECK,0,0)!=0);
 	m_arHotkey[hkoTopMost].m_fWin=(SendDlgItemMessage(IDC_CHECK_TOPMOST_WIN,
 		BM_GETCHECK,0,0)!=0);
-	CULComboBox cb;
-	cb.Attach(GetDlgItem(IDC_COMBO_TOPMOST_MSG));
-	m_arHotkey[hkoTopMost].m_uMsg=cb.GetItemData(cb.GetCurSel());
-	cb.Detach();
-
+	CULComboBox cbTopMost;
+	cbTopMost.Attach(GetDlgItem(IDC_COMBO_TOPMOST_MSG));
+	m_arHotkey[hkoTopMost].m_uMsg=cbTopMost.GetItemData(cbTopMost.GetCurSel());
+	cbTopMost.Detach();
+	//возвращаем значение горячих клавиш для move
+	m_arHotkey[hkoMoveWnd].m_fAlt=(SendDlgItemMessage(IDC_CHECK_MOVE_ALT,
+		BM_GETCHECK,0,0)!=0);
+	m_arHotkey[hkoMoveWnd].m_fCtrl=(SendDlgItemMessage(IDC_CHECK_MOVE_CTRL,
+		BM_GETCHECK,0,0)!=0);
+	m_arHotkey[hkoMoveWnd].m_fShift=(SendDlgItemMessage(IDC_CHECK_MOVE_SHIFT,
+		BM_GETCHECK,0,0)!=0);
+	m_arHotkey[hkoMoveWnd].m_fWin=(SendDlgItemMessage(IDC_CHECK_MOVE_WIN,
+		BM_GETCHECK,0,0)!=0);
+	CULComboBox cbMove;
+	cbMove.Attach(GetDlgItem(IDC_COMBO_MOVE_MSG));
+	m_arHotkey[hkoMoveWnd].m_uMsg=cbMove.GetItemData(cbMove.GetCurSel());
+	switch(m_arHotkey[hkoMoveWnd].m_uMsg)
+	{
+	case WM_LBUTTONDOWN:
+		m_arHotkey[hkoMoveWnd].m_uMsg2=WM_LBUTTONUP;
+		break;
+	case WM_MBUTTONDOWN:
+		m_arHotkey[hkoMoveWnd].m_uMsg2=WM_MBUTTONUP;
+		break;
+	case WM_RBUTTONDOWN:
+		m_arHotkey[hkoMoveWnd].m_uMsg2=WM_RBUTTONUP;
+		break;
+	}
+	cbMove.Detach();
 	return CULPropPage::OnApply(nReturn);
 }
