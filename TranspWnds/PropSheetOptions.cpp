@@ -16,6 +16,6 @@ LRESULT CPropSheetOptions::OnInitDialog(WPARAM,LPARAM)
 		IMAGE_ICON,0,0,LR_DEFAULTSIZE);
 	SetIcon(hIcon,FALSE);
 	//#define CS_DROPSHADOW       0x00020000
-	SetClassLong(GCL_STYLE,GetClassLong(*this,GCL_STYLE)|0x00020000);
+	SetClassLong(GCL_STYLE,(LONG)GetClassLong(GCL_STYLE)|0x00020000);
 	return 0;
 }
