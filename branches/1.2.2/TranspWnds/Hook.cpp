@@ -75,6 +75,12 @@ void CHook::Restore()
 
 			if(i->second.fTopMost)
 				::SetWindowPos(i->first,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+			if(i->second.dwStyle)
+			{
+				::SetWindowLong(i->first,GWL_STYLE,
+					::GetWindowLong(i->first,GWL_STYLE)|i->second.dwStyle);
+				::SetWindowPos(i->first,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
+			}
 		}
 		m_mapWndInfo.clear();
 }
@@ -119,6 +125,10 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	lRes=theHook.ProcessSizeWnd((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
 	if(lRes)
 		return lRes;
+	lRes=theHook.ProcessToggleCaption((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
+	if(lRes)
+		return lRes;
+	
 	return CallNextHookEx(theHook.m_hMouse,nCode,wParam,lParam);
 }
 LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
@@ -282,7 +292,44 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	return 1;
 }
 
+LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
+{
+	if(!m_arHotKeyInfo[hkoToggleCaption].IsHotKey(lpMouseHookStruct))
+		return 0;
+	if(!m_arHotKeyInfo[hkoToggleCaption].IsMsg(0,uMsg))
+		return 0;
+	HWND hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
+	if((hWnd=GetPopup(hWnd))==0)
+		return 0;
+	if((GetWindowLong(hWnd,GWL_STYLE)&WS_CAPTION)==WS_CAPTION)
+	{
+		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
+		if((iterItem._Mynode()->_Myval.first==hWnd))
+			iterItem._Mynode()->_Myval.second.dwStyle=(DWORD)::GetWindowLong(hWnd,GWL_STYLE);
+		else
+		{
+			CHook::WNDINFO wi={0};
+			wi.dwStyle=(DWORD)::GetWindowLong(hWnd,GWL_STYLE);
+			m_mapWndInfo[hWnd]=wi;
+		}
+		::SetWindowLong(hWnd,GWL_STYLE,
+			::GetWindowLong(hWnd,GWL_STYLE)&~WS_CAPTION);
+		::SetWindowPos(hWnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
 
-	
-
+		return 1;						
+	}
+	else
+	{
+		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
+		if((iterItem._Mynode()->_Myval.first==hWnd))
+		{
+			::SetWindowLong(hWnd,GWL_STYLE,
+				::GetWindowLong(hWnd,GWL_STYLE)|iterItem._Mynode()->_Myval.second.dwStyle);
+			::SetWindowPos(hWnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
+			iterItem._Mynode()->_Myval.second.dwStyle=0;
+		}
+	}
+	RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+	return 1;
+}
 

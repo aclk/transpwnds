@@ -51,6 +51,12 @@
 #define IDC_CHECK_SIZE_CTRL             1017
 #define IDC_CHECK_SIZE_SHIFT            1018
 #define IDC_CHECK_SIZE_WIN              1019
+#define IDC_COMBO_TOGGLECAPTION_MSG     1020
+#define IDC_CHECK_TOGGLECAPTION_ALT     1021
+#define IDC_CHECK_TOGGLECAPTION_CTRL    1022
+#define IDC_CHECK_TOGGLECAPTION_SHIFT   1023
+#define IDC_CHECK_TOPMOST_WIN2          1024
+#define IDC_CHECK_TOGGLECAPTION_WIN     1024
 
 // Next default values for new objects
 // 
