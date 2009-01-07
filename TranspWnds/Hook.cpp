@@ -97,9 +97,9 @@ CHook* CHook::GetHook()
 ///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
 HWND GetPopup(HWND hWnd)
 {
-//	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
-//		hWnd=GetParent(hWnd);
-	hWnd=GetAncestor(hWnd,GA_ROOT);
+	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
+		hWnd=GetParent(hWnd);
+	//hWnd=GetAncestor(hWnd,GA_ROOT);
 	if(!hWnd)
 		return NULL;		
 	static TCHAR szText[255];
