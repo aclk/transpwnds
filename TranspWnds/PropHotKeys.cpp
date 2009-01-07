@@ -103,6 +103,32 @@ LRESULT CPropHotKeys::OnInitDialog(WPARAM w,LPARAM l)
 			}
 		cbSize.Detach();
 	}	
+	//инициализируем горячие клавиши для ToggleCaption
+	{
+		SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_ALT,BM_SETCHECK,
+			m_arHotkey[hkoToggleCaption].m_fAlt,0);
+		SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_CTRL,BM_SETCHECK,
+			m_arHotkey[hkoToggleCaption].m_fCtrl,0);
+		SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_SHIFT,BM_SETCHECK,
+			m_arHotkey[hkoToggleCaption].m_fShift,0);
+		SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_WIN,BM_SETCHECK,
+			m_arHotkey[hkoToggleCaption].m_fWin,0);
+		CULComboBox cbToggleCaption;
+		cbToggleCaption.Attach(GetDlgItem(IDC_COMBO_TOGGLECAPTION_MSG));
+		int nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_COMBO_LBTN));
+		cbToggleCaption.SetItemData(nItem,WM_LBUTTONDOWN);
+		nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_COMBO_RBTN));
+		cbToggleCaption.SetItemData(nItem,WM_RBUTTONDOWN);
+		nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
+		cbToggleCaption.SetItemData(nItem,WM_MBUTTONDOWN);
+		for(int i=0;i<cbToggleCaption.GetCount();++i)
+			if(m_arHotkey[hkoToggleCaption].IsMsg(0,cbToggleCaption.GetItemData(i)))
+			{
+				cbToggleCaption.SetCurSel(i);
+				break;
+			}
+		cbToggleCaption.Detach();
+	}
 	return CULPropPage::OnInitDialog(w,l);
 }
 
@@ -201,6 +227,21 @@ LRESULT CPropHotKeys::OnApply(BYTE nReturn)
 			break;
 		}
 		cbSize.Detach();
+	}
+	//возвращаем значение горячих клавиш для Toggle Caption
+	{
+		m_arHotkey[hkoToggleCaption].m_fAlt=(SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_ALT,
+			BM_GETCHECK,0,0)!=0);
+		m_arHotkey[hkoToggleCaption].m_fCtrl=(SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_CTRL,
+			BM_GETCHECK,0,0)!=0);
+		m_arHotkey[hkoToggleCaption].m_fShift=(SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_SHIFT,
+			BM_GETCHECK,0,0)!=0);
+		m_arHotkey[hkoToggleCaption].m_fWin=(SendDlgItemMessage(IDC_CHECK_TOGGLECAPTION_WIN,
+			BM_GETCHECK,0,0)!=0);
+		CULComboBox cbToggleCaption;
+		cbToggleCaption.Attach(GetDlgItem(IDC_COMBO_TOGGLECAPTION_MSG));
+		m_arHotkey[hkoToggleCaption].m_uMsg[0]=cbToggleCaption.GetItemData(cbToggleCaption.GetCurSel());
+		cbToggleCaption.Detach();
 	}
 	return CULPropPage::OnApply(nReturn);
 }
