@@ -87,7 +87,7 @@ void CWorkWnd::LoadSettings()
 		CHook::GetHook()->m_arHotKeyInfo[hkoTransp].m_fWin=(BOOL)dwVal;
 	else
 		CHook::GetHook()->m_arHotKeyInfo[hkoTransp].m_fWin=FALSE;
-	CHook::GetHook()->m_arHotKeyInfo[hkoTransp].m_uMsg=WM_MOUSEWHEEL;
+	CHook::GetHook()->m_arHotKeyInfo[hkoTransp].m_uMsg[0]=WM_MOUSEWHEEL;
 	//загрузка гор€чих клавиш дл€ тулзы топмост
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("TopMostAlt"),&dwVal))
 		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_fAlt=(BOOL)dwVal;
@@ -106,9 +106,9 @@ void CWorkWnd::LoadSettings()
 	else
 		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_fWin=FALSE;
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("TopMostMsg"),&dwVal))
-		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg=(BOOL)dwVal;
+		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg[0]=(BOOL)dwVal;
 	else
-		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg=WM_LBUTTONDOWN;
+		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg[0]=WM_LBUTTONDOWN;
 	//загрузка гор€чих клавиш дл€ тулзы move
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("MoveWndAlt"),&dwVal))
 		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_fAlt=(BOOL)dwVal;
@@ -127,17 +127,46 @@ void CWorkWnd::LoadSettings()
 	else
 		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_fWin=FALSE;
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("MoveWndMsg"),&dwVal))
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg=(BOOL)dwVal;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[0]=(BOOL)dwVal;
 	else
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg=WM_LBUTTONDOWN;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[0]=WM_LBUTTONDOWN;
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("MoveWndMsg1"),&dwVal))
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg1=(BOOL)dwVal;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[1]=(BOOL)dwVal;
 	else
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg1=WM_MOUSEMOVE;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[1]=WM_MOUSEMOVE;
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("MoveWndMsg2"),&dwVal))
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg2=(BOOL)dwVal;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[2]=(BOOL)dwVal;
 	else
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg2=WM_LBUTTONUP;
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[2]=WM_LBUTTONUP;
+	//загрузка гор€чих клавиш дл€ тулзы size
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndAlt"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fAlt=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fAlt=TRUE;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndCtrl"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fCtrl=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fCtrl=FALSE;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndShift"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fShift=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fShift=FALSE;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndWin"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fWin=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fWin=FALSE;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndMsg"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[0]=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[0]=WM_RBUTTONDOWN;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndMsg1"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[1]=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[1]=WM_MOUSEMOVE;
+	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("SizeWndMsg2"),&dwVal))
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[2]=(BOOL)dwVal;
+	else
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[2]=WM_RBUTTONUP;
 	//загрузка параметров изменени€ прозрачности
 	if(m_ProfileReg.GetProfileInt(_T("TranspVals"),_T("MinTranspVal"),&dwVal))
 		CHook::GetHook()->m_bMinTranspVal=(BOOL)dwVal;
@@ -170,7 +199,7 @@ void CWorkWnd::SaveSettings()
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("TopMostWin"),
 		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_fWin);
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("TopMostMsg"),
-		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg);
+		CHook::GetHook()->m_arHotKeyInfo[hkoTopMost].m_uMsg[0]);
 	//сохранение гор€чих клавишь дл€ тулзы перемещени€ окна
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("MoveWndAlt"),
 		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_fAlt);
@@ -181,11 +210,26 @@ void CWorkWnd::SaveSettings()
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("MoveWndWin"),
 		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_fWin);
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("MoveWndMsg"),
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg);
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[0]);
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("MoveWndMsg1"),
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg1);
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[1]);
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("MoveWndMsg2"),
-		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg2);
+		CHook::GetHook()->m_arHotKeyInfo[hkoMoveWnd].m_uMsg[2]);
+	//сохранение гор€чих клавишь дл€ тулзы ресайза окна
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndAlt"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fAlt);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndCtrl"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fCtrl);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndShift"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fShift);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndWin"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_fWin);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndMsg"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[0]);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndMsg1"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[1]);
+	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("SizeWndMsg2"),
+		CHook::GetHook()->m_arHotKeyInfo[hkoSizeWnd].m_uMsg[2]);
 
 	m_ProfileReg.WriteProfileInt(_T("TranspVals"),_T("MinTranspVal"),
 		CHook::GetHook()->m_bMinTranspVal);

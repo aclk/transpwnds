@@ -5,14 +5,13 @@
 
 typedef struct tagHotKeyInfo
 {
-	bool IsHotKey(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct);
+	bool IsHotKey(PMSLLHOOKSTRUCT lpMouseHookStruct);
+	bool IsMsg(int nMsg,UINT uMsg);
 	BOOL m_fAlt;
 	BOOL m_fCtrl;
 	BOOL m_fShift;
 	BOOL m_fWin;
-	UINT m_uMsg;
-	UINT m_uMsg1;
-	UINT m_uMsg2;
+	UINT m_uMsg[3];
 	tagHotKeyInfo& operator=(tagHotKeyInfo& HotKeyInfo);
 }HOTKEYINFO,*LPHOTKEYINFO;
 
@@ -21,6 +20,7 @@ enum enHotKeyOperations
 	hkoTransp,
 	hkoTopMost,
 	hkoMoveWnd,
+	hkoSizeWnd,
 	hkoCount
 };
 
@@ -59,4 +59,5 @@ public:
 	LRESULT ProcessTransp(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessTopMost(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
+	LRESULT ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 };

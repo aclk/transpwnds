@@ -23,8 +23,11 @@
 #define IDM_QUIT                        107
 #define IDS_OPTIONSDLG_CAPTION          108
 #define IDS_OPTOINS_TOPMOST_COMBO_LBTN  109
+#define IDS_OPTOINS_COMBO_LBTN          109
 #define IDS_OPTOINS_TOPMOST_COMBO_RBTN  110
+#define IDS_OPTOINS_COMBO_RBTN          110
 #define IDS_OPTOINS_TOPMOST_COMBO_MBTN  111
+#define IDS_OPTOINS_COMBO_MBTN          111
 #define IDS_COMPANY_NAME                112
 #define IDS_MENU_ABOUT                  113
 #define IDC_CHECK_TRANSP_ALT            1001
@@ -42,8 +45,12 @@
 #define IDC_CHECK_MOVE_ALT              1011
 #define IDC_CHECK_MOVE_CTRL             1012
 #define IDC_CHECK_MOVE_SHIFT            1013
-#define IDC_CHECK_TOPMOST_WIN2          1014
 #define IDC_CHECK_MOVE_WIN              1014
+#define IDC_COMBO_SIZE_MSG              1015
+#define IDC_CHECK_SIZE_ALT              1016
+#define IDC_CHECK_SIZE_CTRL             1017
+#define IDC_CHECK_SIZE_SHIFT            1018
+#define IDC_CHECK_SIZE_WIN              1019
 
 // Next default values for new objects
 // 
