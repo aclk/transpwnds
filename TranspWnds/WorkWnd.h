@@ -8,12 +8,6 @@ protected:
 	NOTIFYICONDATA m_niData;
 	enum 
 	{
-		IDM_ENABLE=1001,
-		IDM_DISABLE,
-		IDM_RESTORE,
-		IDM_AUTORUN,
-		IDM_OPTIONS,
-		IDM_QUIT,	
 		NIM_MESSAGE=WM_APP+1,
 	};
 
@@ -32,6 +26,8 @@ protected:
 	void OnDisable(WORD,HWND);
 	void OnRestore(WORD,HWND);
 	void OnOptions(WORD,HWND);
+	
+	void OnAbout(WORD,HWND);
 	
 	void OnQuit(WORD,HWND);
 };
