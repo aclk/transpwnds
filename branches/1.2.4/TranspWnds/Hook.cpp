@@ -233,7 +233,7 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartMoveWnd=false;
 	
-	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg)&&fStartMoveWnd)
 	{
 		fStartMoveWnd=false;
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
@@ -273,7 +273,7 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartSizeWnd=false;
 	
-	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg)&&fStartSizeWnd)
 	{
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 		fStartSizeWnd=false;
