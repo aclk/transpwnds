@@ -74,7 +74,7 @@ CAPTION "About TranspWnds"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
     ICON            IDI_MAINICON,IDC_STATIC,11,17,20,20
-    LTEXT           "TranspWnds Version 1.2.2",IDC_STATIC,40,10,119,8,SS_NOPREFIX
+    LTEXT           "TranspWnds Version 1.2.4",IDC_STATIC,40,10,119,8,SS_NOPREFIX
     LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,25,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
 END
@@ -136,45 +136,6 @@ END
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,2,0
- PRODUCTVERSION 1,2,2,0
- FILEFLAGSMASK 0x17L
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "041904b0"
-        BEGIN
-            VALUE "CompanyName", "UncleLab"
-            VALUE "FileDescription", "TranspWn"
-            VALUE "FileVersion", "1.2.2"
-            VALUE "InternalName", "TranspWn"
-            VALUE "LegalCopyright", "Copyright (C) 2009"
-            VALUE "OriginalFilename", "TranspWn"
-            VALUE "ProductName", " TranspWn"
-            VALUE "ProductVersion", "1.2.2"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x419, 1200
-    END
-END
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -258,6 +219,45 @@ BEGIN
     END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,4,0
+ PRODUCTVERSION 1,2,4,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904b0"
+        BEGIN
+            VALUE "CompanyName", "UncleLab"
+            VALUE "FileDescription", "TranspWn"
+            VALUE "FileVersion", "1.2.4"
+            VALUE "InternalName", "TranspWn"
+            VALUE "LegalCopyright", "Copyright (C) 2009"
+            VALUE "OriginalFilename", "TranspWn"
+            VALUE "ProductName", " TranspWn"
+            VALUE "ProductVersion", "1.2.4"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x419, 1200
+    END
+END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////

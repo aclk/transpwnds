@@ -97,9 +97,9 @@ CHook* CHook::GetHook()
 ///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
 HWND GetPopup(HWND hWnd)
 {
-//	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
-//		hWnd=GetParent(hWnd);
-	hWnd=GetAncestor(hWnd,GA_ROOT);
+	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
+		hWnd=GetParent(hWnd);
+	//hWnd=GetAncestor(hWnd,GA_ROOT);
 	if(!hWnd)
 		return NULL;		
 	static TCHAR szText[255];
@@ -233,7 +233,7 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartMoveWnd=false;
 	
-	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg)&&fStartMoveWnd)
 	{
 		fStartMoveWnd=false;
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
@@ -273,7 +273,7 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartSizeWnd=false;
 	
-	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg)&&fStartSizeWnd)
 	{
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 		fStartSizeWnd=false;

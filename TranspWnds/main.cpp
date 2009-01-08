@@ -1,3 +1,5 @@
+///dep
+
 #define _WIN32_WINNT 0x0501
 #include <windows.h>
 #include <tchar.h>
@@ -208,7 +210,7 @@ bool IsAutoRun()
 	return fFind;
 }
 ///\brief перечисление оконных собщений
-enum 
+/*enum 
 {
 	IDM_ENABLE=1001,
 	IDM_DISABLE,
@@ -216,7 +218,7 @@ enum
 	IDM_AUTORUN,
 	IDM_QUIT,	
 	NIM_MESSAGE=WM_APP+1,
-};
+};*/
 ///\brief оконная функция
 /*
 LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)
