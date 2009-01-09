@@ -146,10 +146,9 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	{
 		if(((short)HIWORD(lpMouseHookStruct->mouseData))>0)
 			return 0;
-		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
 
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if(iterItem._Mynode()->_Myval.first!=hWnd)
+		if(iterItem!=m_mapWndInfo.end())
 		{
 			iterItem._Mynode()->_Myval.second.bAlpha=255;
 			iterItem._Mynode()->_Myval.second.fAlpha=TRUE;
@@ -161,6 +160,7 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 			wi.fAlpha=TRUE;
 			m_mapWndInfo[hWnd]=wi;
 		}
+		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
 		SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 		return 1;
@@ -168,7 +168,7 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first!=hWnd)||(!iterItem._Mynode()->_Myval.second.fAlpha))
+		if((iterItem==m_mapWndInfo.end())||(!iterItem._Mynode()->_Myval.second.fAlpha))
 			return 0;                               
 	}
 	BYTE bAlpha=m_mapWndInfo[hWnd].bAlpha;
@@ -199,7 +199,7 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_TOPMOST)==0)
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 			iterItem._Mynode()->_Myval.second.fTopMost=TRUE;
 		else
 		{
@@ -213,7 +213,7 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 		{
 			iterItem._Mynode()->_Myval.second.fTopMost=FALSE;
 			::SetWindowPos(hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
@@ -314,7 +314,7 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 	if((GetWindowLong(hWnd,GWL_STYLE)&WS_CAPTION)==WS_CAPTION)
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 			iterItem._Mynode()->_Myval.second.dwStyle=(DWORD)::GetWindowLong(hWnd,GWL_STYLE);
 		else
 		{
@@ -331,7 +331,7 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 		{
 			::SetWindowLong(hWnd,GWL_STYLE,
 				::GetWindowLong(hWnd,GWL_STYLE)|iterItem._Mynode()->_Myval.second.dwStyle);
