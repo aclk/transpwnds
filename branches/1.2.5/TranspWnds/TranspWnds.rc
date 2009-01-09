@@ -193,6 +193,17 @@ BEGIN
     CONTROL         "Run on Windows startup",IDC_CHECK_AUTORUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,17,95,10
 END
 
+IDD_PROPPAGE_TRANSPARENT DIALOGEX 0, 0, 228, 127
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Transparent"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SLIDER_MIN_TRANSP_LEVEL,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,18,210,18
+    GROUPBOX        "Min transparent level",IDC_STATIC,7,7,214,30
+    CONTROL         "",IDC_SLIDER_TRANSP_LEVEL_STEP,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,51,210,18
+    GROUPBOX        "Step change of transparent level",IDC_STATIC,7,40,214,30
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -216,6 +227,14 @@ BEGIN
         RIGHTMARGIN, 221
         TOPMARGIN, 7
         BOTTOMMARGIN, 96
+    END
+
+    IDD_PROPPAGE_TRANSPARENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
     END
 END
 #endif    // APSTUDIO_INVOKED

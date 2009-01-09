@@ -9,6 +9,7 @@
 #define IDM_ABOUT                       101
 #define IDS_MENU_ENABLE                 102
 #define IDM_ENABLE                      102
+#define IDD_PROPPAGE_TRANSPARENT        102
 #define IDS_MENU_DISABLE                103
 #define IDM_DISABLE                     103
 #define IDS_MENU_RESTORE                104
@@ -45,7 +46,10 @@
 #define IDC_CHECK_MOVE_ALT              1011
 #define IDC_CHECK_MOVE_CTRL             1012
 #define IDC_CHECK_MOVE_SHIFT            1013
+#define IDC_SLIDER_TRANSP_LEVEL         1013
+#define IDC_SLIDER_MIN_TRANSP_LEVEL     1013
 #define IDC_CHECK_MOVE_WIN              1014
+#define IDC_SLIDER_TRANSP_LEVEL_STEP    1014
 #define IDC_COMBO_SIZE_MSG              1015
 #define IDC_CHECK_SIZE_ALT              1016
 #define IDC_CHECK_SIZE_CTRL             1017
@@ -64,7 +68,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        103
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1012
+#define _APS_NEXT_CONTROL_VALUE         1014
 #define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif

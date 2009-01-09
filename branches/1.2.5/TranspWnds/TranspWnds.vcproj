@@ -185,10 +185,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\main.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\PropHotKeys.cpp"
 				>
 			</File>
@@ -198,6 +194,10 @@
 			</File>
 			<File
 				RelativePath=".\PropSystem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PropTransparent.cpp"
 				>
 			</File>
 			<File
@@ -228,6 +228,10 @@
 			</File>
 			<File
 				RelativePath=".\PropSystem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropTransparent.h"
 				>
 			</File>
 			<File
