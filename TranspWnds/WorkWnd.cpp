@@ -4,7 +4,9 @@
 #include "resource.h"
 #include "PropHotKeys.h"
 #include "PropSystem.h"
+#include "PropTransparent.h"
 #include "PropSheetOptions.h"
+
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
 {
@@ -317,6 +319,11 @@ void CWorkWnd::OnOptions(WORD,HWND)
 		propHotKeys.m_arHotkey[i]=CHook::GetHook()->m_arHotKeyInfo[i];
 	ps.AddPage(propHotKeys.Create(IDD_PROPPAGE_HOTKEYS));	
 
+	CPropTransparent propTransparent;
+	propTransparent.m_nMinTransparentLevel=int(100*double(255-CHook::GetHook()->m_bMinTranspVal)/255);
+	propTransparent.m_nTransparentLevelStep=int(100*double(CHook::GetHook()->m_bTranspStep)/255);
+	ps.AddPage(propTransparent.Create(IDD_PROPPAGE_TRANSPARENT));		
+
 	CPropSystem propSystem;
 	propSystem.m_fAutoRun=m_ProfileReg.IsAutoRun(CULStrTable(IDS_APP_NAME));
 	ps.AddPage(propSystem.Create(IDD_PROPPAGE_SYSTEM));	
@@ -326,6 +333,10 @@ void CWorkWnd::OnOptions(WORD,HWND)
 	{
 		for(int i=0;i<hkoCount;++i)
 			CHook::GetHook()->m_arHotKeyInfo[i]=propHotKeys.m_arHotkey[i];
+
+		CHook::GetHook()->m_bMinTranspVal=255-int(255*double(propTransparent.m_nMinTransparentLevel)/100);
+		CHook::GetHook()->m_bTranspStep=int(255*double(propTransparent.m_nTransparentLevelStep)/100);
+
 		SaveSettings();
 		if(propSystem.m_fAutoRun)
 		{

@@ -184,6 +184,12 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	}                       
 	SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);            
 	m_mapWndInfo[hWnd].bAlpha=bAlpha;
+/*	if(m_mapWndInfo[hWnd].bAlpha==255)
+	{
+		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+		m_mapWndInfo[hWnd].fAlpha=FALSE;
+	}
+	*/
 	return 1;
 }
 
