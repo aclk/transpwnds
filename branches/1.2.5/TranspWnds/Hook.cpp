@@ -147,10 +147,20 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 		if(((short)HIWORD(lpMouseHookStruct->mouseData))>0)
 			return 0;
 		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
-		CHook::WNDINFO wi={0};
-		wi.bAlpha=255;
-		wi.fAlpha=TRUE;
-		m_mapWndInfo[hWnd]=wi;
+
+		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
+		if(iterItem._Mynode()->_Myval.first!=hWnd)
+		{
+			iterItem._Mynode()->_Myval.second.bAlpha=255;
+			iterItem._Mynode()->_Myval.second.fAlpha=TRUE;
+		}
+		else
+		{
+			CHook::WNDINFO wi={0};
+			wi.bAlpha=255;
+			wi.fAlpha=TRUE;
+			m_mapWndInfo[hWnd]=wi;
+		}
 		SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 		return 1;
