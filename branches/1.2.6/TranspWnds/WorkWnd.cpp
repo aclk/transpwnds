@@ -6,6 +6,7 @@
 #include "PropSystem.h"
 #include "PropTransparent.h"
 #include "PropSheetOptions.h"
+#include "AboutDlg.h"
 
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
@@ -351,7 +352,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 
 void CWorkWnd::OnAbout(WORD,HWND)
 {
-	CULDlg dlg;
+	CAboutDlg dlg;
 	dlg.CreateModal(IDD_ABOUTBOX,*this);
 }
 

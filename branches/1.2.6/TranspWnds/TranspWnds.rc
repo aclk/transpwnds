@@ -68,15 +68,16 @@ IDI_MAINICON            ICON                    "Win32Wiz.ico"
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 46
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About TranspWnds"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDI_MAINICON,IDC_STATIC,11,17,20,20
-    LTEXT           "TranspWnds Version 1.2.5",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,25,119,8
+    ICON            IDI_MAINICON,IDC_STATIC,11,13,21,20
+    LTEXT           "TranspWnds Version 1.2.6",IDC_STATIC,40,9,119,8,SS_NOPREFIX
+    LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,19,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+    LTEXT           "Homepage:",IDC_STATIC,40,29,38,8
 END
 
 
@@ -93,7 +94,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 228
         TOPMARGIN, 7
-        BOTTOMMARGIN, 48
+        BOTTOMMARGIN, 39
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -246,8 +247,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,5,0
- PRODUCTVERSION 1,2,5,0
+ FILEVERSION 1,2,6,0
+ PRODUCTVERSION 1,2,6,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -263,13 +264,13 @@ BEGIN
         BLOCK "041904b0"
         BEGIN
             VALUE "CompanyName", "UncleLab"
-            VALUE "FileDescription", "TranspWn"
-            VALUE "FileVersion", "1.2.5"
-            VALUE "InternalName", "TranspWn"
+            VALUE "FileDescription", "TranspWnd"
+            VALUE "FileVersion", "1.2.6"
+            VALUE "InternalName", "TranspWnd"
             VALUE "LegalCopyright", "Copyright (C) 2009"
-            VALUE "OriginalFilename", "TranspWn"
-            VALUE "ProductName", " TranspWn"
-            VALUE "ProductVersion", "1.2.5"
+            VALUE "OriginalFilename", "TranspWnd"
+            VALUE "ProductName", " TranspWnd"
+            VALUE "ProductVersion", "1.2.6"
         END
     END
     BLOCK "VarFileInfo"
