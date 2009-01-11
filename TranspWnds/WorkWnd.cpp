@@ -7,7 +7,6 @@
 #include "PropTransparent.h"
 #include "PropSheetOptions.h"
 #include "AboutDlg.h"
-#include "ViewingWndsDlg.h"
 
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
@@ -15,6 +14,7 @@ CWorkWnd::CWorkWnd(void):
 	MessageMap.AddMessage<CWorkWnd>(WM_CREATE,&CWorkWnd::OnCreate);
 	MessageMap.AddMessage<CWorkWnd>(WM_DESTROY,&CWorkWnd::OnDestroy);
 	MessageMap.AddMessage<CWorkWnd>(NIM_MESSAGE,&CWorkWnd::OnNIMessage);
+	MessageMap.AddMessage<CWorkWnd>(WM_TIMER,&CWorkWnd::OnTimer);
 
 	MessageMap.AddCommand<CWorkWnd>(IDM_ENABLE,&CWorkWnd::OnEnable);
 	MessageMap.AddCommand<CWorkWnd>(IDM_DISABLE,&CWorkWnd::OnDisable);
@@ -71,6 +71,8 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	LoadSettings();
 
 	CHook::GetHook()->Enable();
+
+	SetTimer(1,2000);
 
 	return 0;
 }
@@ -278,8 +280,28 @@ void CWorkWnd::SaveSettings()
 		CHook::GetHook()->m_bTranspStep);
 }
 
+LRESULT CWorkWnd::OnTimer(WPARAM,LPARAM)
+{
+	for(std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=
+		CHook::GetHook()->m_mapWndInfo.begin();
+		iterItem!=CHook::GetHook()->m_mapWndInfo.end();iterItem++)
+		if(!::IsWindow(iterItem->first))
+		{
+			if(m_ViewingWndsDlg.IsWindow())
+				m_ViewingWndsDlg.DeleteItem(iterItem->first);
+			CHook::GetHook()->m_mapWndInfo.erase(iterItem->first);
+			break;
+		}
+		else
+			if(m_ViewingWndsDlg.IsWindow())
+				m_ViewingWndsDlg.InsertItem(iterItem->first);
+	return 1;
+}
+
+
 LRESULT CWorkWnd::OnDestroy(WPARAM,LPARAM)
 {
+	KillTimer(1);
 	Shell_NotifyIcon(NIM_DELETE,&m_niData);
 	::PostQuitMessage(0);
 	return 0;
@@ -319,8 +341,7 @@ void CWorkWnd::OnRestore(WORD,HWND)
 
 void CWorkWnd::OnViewingWnds(WORD,HWND)
 {
-	CViewingWndsDlg dlg;
-	dlg.CreateModal(IDD_VIEWING_WINDOWS,*this);
+	m_ViewingWndsDlg.CreateModal(IDD_VIEWING_WINDOWS,*this);
 }
 
 void CWorkWnd::OnOptions(WORD,HWND)

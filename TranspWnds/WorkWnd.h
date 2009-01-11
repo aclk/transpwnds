@@ -1,5 +1,8 @@
 #pragma once
 #include "ULLibNS.h"
+#include "ViewingWndsDlg.h"
+
+
 class CWorkWnd :
 	public CULWnd
 {
@@ -12,6 +15,9 @@ protected:
 	};
 
 	CULProfileReg m_ProfileReg;
+
+	CViewingWndsDlg m_ViewingWndsDlg;
+
 public:
 	CWorkWnd(void);
 	~CWorkWnd(void);
@@ -19,6 +25,7 @@ public:
 	void SaveSettings();
 protected:
 	LRESULT OnCreate(WPARAM,LPARAM);
+	LRESULT OnTimer(WPARAM,LPARAM);
 	LRESULT OnDestroy(WPARAM,LPARAM);
 	LRESULT OnNIMessage(WPARAM,LPARAM);
 
