@@ -329,7 +329,7 @@ void CViewingWndsDlg::InsertItem(HWND hwndItem)
 		ULListCtrlEx::CItemCheckBox* pItemCheckBox=(ULListCtrlEx::CItemCheckBox*)
 			m_listctrlViewingWnds.GetItemObject(nFindItem,1);
 		pItemCheckBox->SetCheck(i->second.fAlpha);
-
+/*
 		ULListCtrlEx::CItemComboBox* pItemComboBox=(ULListCtrlEx::CItemComboBox*)
 			m_listctrlViewingWnds.GetItemObject(nFindItem,2);
 		pItemComboBox->m_ComboBox.ResetContent();
@@ -344,16 +344,18 @@ void CViewingWndsDlg::InsertItem(HWND hwndItem)
 				int nItem=pItemComboBox->m_ComboBox.AddString(szValAlpha);
 				pItemComboBox->m_ComboBox.SetItemData(nItem,(DWORD)ii);					
 			}
-			pItemComboBox->m_ComboBox.AddString(_T("0"));
+			int nItemLast=pItemComboBox->m_ComboBox.AddString(_T("0"));
 			if(i->second.fAlpha)
 			{
-				pItemComboBox->m_ComboBox.SetCurSel(
-					i->second.bAlpha/CHook::GetHook()->m_bTranspStep);
+				if(i->second.bAlpha==255)
+					pItemComboBox->m_ComboBox.SetCurSel(nItemLast);
+				else
+					pItemComboBox->m_ComboBox.SetCurSel(
+						i->second.bAlpha/CHook::GetHook()->m_bTranspStep);
 			}
-			else
-				pItemComboBox->m_ComboBox.EnableWindow(FALSE);
+			pItemComboBox->m_ComboBox.EnableWindow(i->second.fAlpha);
 		}
-
+*/
 		pItemCheckBox=(ULListCtrlEx::CItemCheckBox*)
 			m_listctrlViewingWnds.GetItemObject(nFindItem,3);
 		pItemCheckBox->SetCheck(i->second.fTopMost);
