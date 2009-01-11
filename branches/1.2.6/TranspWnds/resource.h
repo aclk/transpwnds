@@ -12,6 +12,7 @@
 #define IDD_PROPPAGE_TRANSPARENT        102
 #define IDS_MENU_DISABLE                103
 #define IDM_DISABLE                     103
+#define IDD_VIEWING_WINDOWS             103
 #define IDS_MENU_RESTORE                104
 #define IDM_RESTORE                     104
 #define IDS_MENU_QUIT                   105
@@ -23,6 +24,7 @@
 #define IDD_PROPPAGE_SYSTEM             107
 #define IDM_QUIT                        107
 #define IDS_OPTIONSDLG_CAPTION          108
+#define IDM_VIEWING                     108
 #define IDS_OPTOINS_TOPMOST_COMBO_LBTN  109
 #define IDS_OPTOINS_COMBO_LBTN          109
 #define IDS_OPTOINS_TOPMOST_COMBO_RBTN  110
@@ -31,6 +33,13 @@
 #define IDS_OPTOINS_COMBO_MBTN          111
 #define IDS_COMPANY_NAME                112
 #define IDS_MENU_ABOUT                  113
+#define IDS_MENU_VIEWING                114
+#define IDS_VIEWING_LIST_COLUMN_CAPTION 115
+#define IDS_VIEWING_LIST_COLUMN_TRANSPARENT 116
+#define IDS_VIEWING_LIST_COLUMN_TRANSPARENT_LEVEL 117
+#define IDS_VIEWING_LIST_COLUMN_TOPMOST 118
+#define IDS_VIEWING_LIST_COLUMN_USECAPTION 119
+#define IDS_VIEWING_LIST_COLUMN_HIDECAPTION 119
 #define IDC_CHECK_TRANSP_ALT            1001
 #define IDC_CHECK_TRANSP_CTRL           1002
 #define IDC_CHECK_TRANSP_SHIFT          1003
@@ -46,10 +55,10 @@
 #define IDC_CHECK_MOVE_ALT              1011
 #define IDC_CHECK_MOVE_CTRL             1012
 #define IDC_CHECK_MOVE_SHIFT            1013
-#define IDC_SLIDER_TRANSP_LEVEL         1013
 #define IDC_SLIDER_MIN_TRANSP_LEVEL     1013
 #define IDC_CHECK_MOVE_WIN              1014
 #define IDC_SLIDER_TRANSP_LEVEL_STEP    1014
+#define IDC_LIST_VIEWING_WINDOWS        1014
 #define IDC_COMBO_SIZE_MSG              1015
 #define IDC_CHECK_SIZE_ALT              1016
 #define IDC_CHECK_SIZE_CTRL             1017
@@ -66,9 +75,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        103
+#define _APS_NEXT_RESOURCE_VALUE        104
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1014
-#define _APS_NEXT_SYMED_VALUE           108
+#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_SYMED_VALUE           109
 #endif
 #endif

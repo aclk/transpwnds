@@ -109,7 +109,7 @@ LRESULT CPropTransparent::OnInitDialog(WPARAM w,LPARAM l)
 
 LRESULT CPropTransparent::OnHScroll(WPARAM wParam,LPARAM lParam)
 {
-	if(GetDlgItem(IDC_SLIDER_TRANSP_LEVEL)==(HWND)lParam)
+	if(GetDlgItem(IDC_SLIDER_MIN_TRANSP_LEVEL)==(HWND)lParam)
 	{
 		if(LOWORD(wParam)==TB_ENDTRACK)
 		{
