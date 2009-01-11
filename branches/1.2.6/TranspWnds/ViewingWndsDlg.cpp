@@ -410,11 +410,11 @@ void CViewingWndsDlg::OnTransparent(WORD,HWND hWnd)
 	}
 	else
 	{
-		::SetWindowLong(hwndManaged,GWL_EXSTYLE,::GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
 		::SetLayeredWindowAttributes(hwndManaged,0,255,LWA_ALPHA);
+		::SetWindowLong(hwndManaged,GWL_EXSTYLE,::GetWindowLong(hwndManaged,GWL_EXSTYLE)&~WS_EX_LAYERED);
 		CHook::GetHook()->m_mapWndInfo[hwndManaged].fAlpha=FALSE;
+		//::RedrawWindow(hwndManaged,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_FRAME|RDW_ALLCHILDREN);
 	}
-	::RedrawWindow(hwndManaged,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_FRAME|RDW_ALLCHILDREN);
 }
 
 void CViewingWndsDlg::OnTransparentLevelComboSelenOk(WORD,HWND hwndCombo)
