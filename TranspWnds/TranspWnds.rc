@@ -80,6 +80,15 @@ BEGIN
     LTEXT           "Homepage:",IDC_STATIC,40,29,38,8
 END
 
+IDD_VIEWING_WINDOWS DIALOGEX 0, 0, 305, 188
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+CAPTION "Viewing windows"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_VIEWING_WINDOWS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,292,176
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -95,6 +104,14 @@ BEGIN
         RIGHTMARGIN, 228
         TOPMARGIN, 7
         BOTTOMMARGIN, 39
+    END
+
+    IDD_VIEWING_WINDOWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 298
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 181
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -113,7 +130,7 @@ BEGIN
     IDS_MENU_QUIT           "Quit"
     IDS_APP_NAME            "TranspWnds"
     IDS_MENU_OPTIONS        "Options"
-    IDS_OPTIONSDLG_CAPTION  "Options dialog"
+    IDS_OPTIONSDLG_CAPTION  "Options"
     IDS_OPTOINS_COMBO_LBTN  "left button"
     IDS_OPTOINS_COMBO_RBTN  "right button"
     IDS_OPTOINS_COMBO_MBTN  "middle button"
@@ -123,6 +140,12 @@ STRINGTABLE
 BEGIN
     IDS_COMPANY_NAME        "UncleLab"
     IDS_MENU_ABOUT          "About"
+    IDS_MENU_VIEWING        "Viewing windows"
+    IDS_VIEWING_LIST_COLUMN_CAPTION "Window caption"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT "Transparent"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT_LEVEL "Transparent level"
+    IDS_VIEWING_LIST_COLUMN_TOPMOST "Top most"
+    IDS_VIEWING_LIST_COLUMN_HIDECAPTION "Hide caption"
 END
 
 #endif    // Russian resources

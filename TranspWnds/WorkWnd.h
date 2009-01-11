@@ -25,6 +25,9 @@ protected:
 	void OnEnable(WORD,HWND);
 	void OnDisable(WORD,HWND);
 	void OnRestore(WORD,HWND);
+
+	void OnViewingWnds(WORD,HWND);
+
 	void OnOptions(WORD,HWND);
 	
 	void OnAbout(WORD,HWND);

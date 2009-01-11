@@ -7,6 +7,7 @@
 #include "PropTransparent.h"
 #include "PropSheetOptions.h"
 #include "AboutDlg.h"
+#include "ViewingWndsDlg.h"
 
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
@@ -18,6 +19,9 @@ CWorkWnd::CWorkWnd(void):
 	MessageMap.AddCommand<CWorkWnd>(IDM_ENABLE,&CWorkWnd::OnEnable);
 	MessageMap.AddCommand<CWorkWnd>(IDM_DISABLE,&CWorkWnd::OnDisable);
 	MessageMap.AddCommand<CWorkWnd>(IDM_RESTORE,&CWorkWnd::OnRestore);
+
+	MessageMap.AddCommand<CWorkWnd>(IDM_VIEWING,&CWorkWnd::OnViewingWnds);	
+
 	MessageMap.AddCommand<CWorkWnd>(IDM_OPTIONS,&CWorkWnd::OnOptions);
 
 	MessageMap.AddCommand<CWorkWnd>(IDM_ABOUT,&CWorkWnd::OnAbout);
@@ -41,8 +45,9 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_DISABLE,CULStrTable(IDS_MENU_DISABLE));
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_RESTORE,CULStrTable(IDS_MENU_RESTORE));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,3,NULL);			
+	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_VIEWING,CULStrTable(IDS_MENU_VIEWING));			
+	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,3,NULL);			
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_OPTIONS,CULStrTable(IDS_MENU_OPTIONS));			
-//	m_Menu.AppendMenu((IsAutoRun())?MF_CHECKED:0)|MF_BYCOMMAND, IDM_AUTORUN, _T("AutoRun"));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,5,NULL);
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_ABOUT,CULStrTable(IDS_MENU_ABOUT));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,5,NULL);
@@ -310,6 +315,12 @@ void CWorkWnd::OnDisable(WORD,HWND)
 void CWorkWnd::OnRestore(WORD,HWND)
 {
 	CHook::GetHook()->Restore();
+}
+
+void CWorkWnd::OnViewingWnds(WORD,HWND)
+{
+	CViewingWndsDlg dlg;
+	dlg.CreateModal(IDD_VIEWING_WINDOWS,*this);
 }
 
 void CWorkWnd::OnOptions(WORD,HWND)
