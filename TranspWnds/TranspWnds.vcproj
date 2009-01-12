@@ -177,15 +177,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\AboutDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\App.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Hook.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\main.cpp"
 				>
 			</File>
 			<File
@@ -201,6 +201,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PropTransparent.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ViewingWndsDlg.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WorkWnd.cpp"
 				>
 			</File>
@@ -210,6 +218,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\AboutDlg.h"
+				>
+			</File>
 			<File
 				RelativePath=".\App.h"
 				>
@@ -231,7 +243,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PropTransparent.h"
+				>
+			</File>
+			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ViewingWndsDlg.h"
 				>
 			</File>
 			<File
