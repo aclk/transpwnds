@@ -342,7 +342,6 @@ void CWorkWnd::OnRestore(WORD,HWND)
 void CWorkWnd::OnViewingWnds(WORD,HWND)
 {
 	m_ViewingWndsDlg.CreateModal(IDD_VIEWING_WINDOWS,*this);
-	MessageBox(0,0,0);
 }
 
 void CWorkWnd::OnOptions(WORD,HWND)

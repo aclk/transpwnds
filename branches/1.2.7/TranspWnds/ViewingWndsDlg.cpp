@@ -25,8 +25,9 @@ LRESULT CViewingWndsDlg::OnInitDialog(WPARAM w,LPARAM l)
 	SetIcon(hIcon,FALSE);
 	//#define CS_DROPSHADOW       0x00020000
 	SetClassLong(GCL_STYLE,(LONG)GetClassLong(GCL_STYLE)|0x00020000);
+	m_lpSubClassWndProc=NULL;
 	//================================================================
-	m_listctrlViewingWnds.Attach(GetDlgItem(IDC_LIST_VIEWING_WINDOWS));
+	ASSERT(m_listctrlViewingWnds.Attach(GetDlgItem(IDC_LIST_VIEWING_WINDOWS)));
 	m_listctrlViewingWnds.SetExtendedStyle(LVS_EX_GRIDLINES);
 	m_listctrlViewingWnds.InsertColumn(1,CULStrTable(IDS_VIEWING_LIST_COLUMN_TRANSPARENT),LVCFMT_LEFT);
 	m_listctrlViewingWnds.InsertColumn(2,CULStrTable(IDS_VIEWING_LIST_COLUMN_TRANSPARENT_LEVEL),LVCFMT_LEFT);
