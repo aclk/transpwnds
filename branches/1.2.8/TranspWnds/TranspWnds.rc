@@ -1,0 +1,319 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+#ifdef _WIN32
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// RT_MANIFEST
+//
+
+IDR_RT_MANIFEST1        RT_MANIFEST             "manifest.xml"
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_MAINICON            ICON                    "Win32Wiz.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 46
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About TranspWnds"
+FONT 8, "MS Shell Dlg", 0, 0, 0x1
+BEGIN
+    ICON            IDI_MAINICON,IDC_STATIC,11,13,21,20
+    LTEXT           "TranspWnds Version 1.2.6",IDC_STATIC,40,9,119,8,SS_NOPREFIX
+    LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,19,119,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+    LTEXT           "Homepage:",IDC_STATIC,40,29,38,8
+END
+
+IDD_VIEWING_WINDOWS DIALOGEX 0, 0, 305, 188
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+CAPTION "Viewing windows"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_VIEWING_WINDOWS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,292,176
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 39
+    END
+
+    IDD_VIEWING_WINDOWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 298
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 181
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE 
+BEGIN
+    IDS_MENU_ENABLE         "Enable"
+    IDS_MENU_DISABLE        "Disable"
+    IDS_MENU_RESTORE        "Restore"
+    IDS_MENU_QUIT           "Quit"
+    IDS_APP_NAME            "TranspWnds"
+    IDS_MENU_OPTIONS        "Options"
+    IDS_OPTIONSDLG_CAPTION  "Options"
+    IDS_OPTOINS_COMBO_LBTN  "left button"
+    IDS_OPTOINS_COMBO_RBTN  "right button"
+    IDS_OPTOINS_COMBO_MBTN  "middle button"
+END
+
+STRINGTABLE 
+BEGIN
+    IDS_COMPANY_NAME        "UncleLab"
+    IDS_MENU_ABOUT          "About"
+    IDS_MENU_VIEWING        "Viewing windows"
+    IDS_VIEWING_LIST_COLUMN_CAPTION "Window caption"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT "Transparent"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT_LEVEL "Transparent level"
+    IDS_VIEWING_LIST_COLUMN_TOPMOST "Top most"
+    IDS_VIEWING_LIST_COLUMN_HIDECAPTION "Hide caption"
+END
+
+#endif    // Russian resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_PROPPAGE_HOTKEYS DIALOGEX 0, 0, 228, 183
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Hotkey"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "Transparent",IDC_STATIC,7,7,214,27
+    LTEXT           "+",IDC_STATIC,79,20,8,8,0,WS_EX_TRANSPARENT
+    CONTROL         "ALT+",IDC_CHECK_TRANSP_ALT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,89,20,29,10
+    CONTROL         "CTRL+",IDC_CHECK_TRANSP_CTRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,120,20,34,10
+    CONTROL         "SHIFT+",IDC_CHECK_TRANSP_SHIFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,154,20,36,10
+    CONTROL         "WIN",IDC_CHECK_TRANSP_WIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,20,26,10
+    GROUPBOX        "TopMost",IDC_STATIC,7,39,214,28
+    COMBOBOX        IDC_COMBO_TOPMOST_MSG,12,50,66,40,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ALT+",IDC_CHECK_TOPMOST_ALT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,53,29,10
+    CONTROL         "CTRL+",IDC_CHECK_TOPMOST_CTRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,53,33,10
+    CONTROL         "SHIFT+",IDC_CHECK_TOPMOST_SHIFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,153,53,37,10
+    CONTROL         "WIN",IDC_CHECK_TOPMOST_WIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,53,26,10
+    LTEXT           "+",IDC_STATIC,80,53,8,8,0,WS_EX_TRANSPARENT
+    LTEXT           "MouseWheel",IDC_STATIC,25,20,42,8,0,WS_EX_TRANSPARENT
+    GROUPBOX        "Move",IDC_STATIC,7,72,214,29
+    COMBOBOX        IDC_COMBO_MOVE_MSG,12,83,66,40,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ALT+",IDC_CHECK_MOVE_ALT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,87,29,10
+    CONTROL         "CTRL+",IDC_CHECK_MOVE_CTRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,87,33,10
+    CONTROL         "SHIFT+",IDC_CHECK_MOVE_SHIFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,153,87,37,10
+    CONTROL         "WIN",IDC_CHECK_MOVE_WIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,87,26,10
+    LTEXT           "+",IDC_STATIC,80,87,8,8,0,WS_EX_TRANSPARENT
+    GROUPBOX        "Size",IDC_STATIC,7,107,214,29
+    COMBOBOX        IDC_COMBO_SIZE_MSG,12,118,66,40,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ALT+",IDC_CHECK_SIZE_ALT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,121,29,10
+    CONTROL         "CTRL+",IDC_CHECK_SIZE_CTRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,121,33,10
+    CONTROL         "SHIFT+",IDC_CHECK_SIZE_SHIFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,153,121,37,10
+    CONTROL         "WIN",IDC_CHECK_SIZE_WIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,121,26,10
+    LTEXT           "+",IDC_STATIC,80,121,8,8,0,WS_EX_TRANSPARENT
+    GROUPBOX        "ToggleCaption",IDC_STATIC,7,142,214,28
+    COMBOBOX        IDC_COMBO_TOGGLECAPTION_MSG,12,153,66,40,CBS_DROPDOWNLIST | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "ALT+",IDC_CHECK_TOGGLECAPTION_ALT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,88,157,29,10
+    CONTROL         "CTRL+",IDC_CHECK_TOGGLECAPTION_CTRL,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,119,157,33,10
+    CONTROL         "SHIFT+",IDC_CHECK_TOGGLECAPTION_SHIFT,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,153,157,37,10
+    CONTROL         "WIN",IDC_CHECK_TOGGLECAPTION_WIN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,190,157,26,10
+    LTEXT           "+",IDC_STATIC,80,157,8,8,0,WS_EX_TRANSPARENT
+END
+
+IDD_PROPPAGE_SYSTEM DIALOGEX 0, 0, 228, 103
+STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "System"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    GROUPBOX        "AutoRun",IDC_STATIC,7,7,214,22
+    CONTROL         "Run on Windows startup",IDC_CHECK_AUTORUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,17,95,10
+END
+
+IDD_PROPPAGE_TRANSPARENT DIALOGEX 0, 0, 228, 127
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Transparent"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SLIDER_MIN_TRANSP_LEVEL,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,18,210,18
+    GROUPBOX        "Min transparent level",IDC_STATIC,7,7,214,30
+    CONTROL         "",IDC_SLIDER_TRANSP_LEVEL_STEP,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,51,210,18
+    GROUPBOX        "Step change of transparent level",IDC_STATIC,7,40,214,30
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO 
+BEGIN
+    IDD_PROPPAGE_HOTKEYS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_PROPPAGE_SYSTEM, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 96
+    END
+
+    IDD_PROPPAGE_TRANSPARENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,6,0
+ PRODUCTVERSION 1,2,6,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904b0"
+        BEGIN
+            VALUE "CompanyName", "UncleLab"
+            VALUE "FileDescription", "TranspWnd"
+            VALUE "FileVersion", "1.2.6"
+            VALUE "InternalName", "TranspWnd"
+            VALUE "LegalCopyright", "Copyright (C) 2009"
+            VALUE "OriginalFilename", "TranspWnd"
+            VALUE "ProductName", " TranspWnd"
+            VALUE "ProductVersion", "1.2.6"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x419, 1200
+    END
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
