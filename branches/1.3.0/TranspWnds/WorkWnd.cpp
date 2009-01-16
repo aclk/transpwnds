@@ -6,7 +6,7 @@
 #include "PropSystem.h"
 #include "PropTransparent.h"
 
-#include "OSDWnd.h"
+
 
 #include "AboutDlg.h"
 
@@ -16,6 +16,8 @@ CWorkWnd::CWorkWnd(void):
 	MessageMap.AddMessage<CWorkWnd>(WM_CREATE,&CWorkWnd::OnCreate);
 	MessageMap.AddMessage<CWorkWnd>(WM_DESTROY,&CWorkWnd::OnDestroy);
 	MessageMap.AddMessage<CWorkWnd>(NIM_MESSAGE,&CWorkWnd::OnNIMessage);
+	MessageMap.AddMessage<CWorkWnd>(OSDM_MESSAGE,&CWorkWnd::OnOSDMessage);
+
 	MessageMap.AddMessage<CWorkWnd>(WM_TIMER,&CWorkWnd::OnTimer);
 
 	MessageMap.AddCommand<CWorkWnd>(IDM_ENABLE,&CWorkWnd::OnEnable);
@@ -75,6 +77,8 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	CHook::GetHook()->Enable();
 
 	SetTimer(1,2000);
+
+	ASSERT(m_osdWnd.Create(*this));
 
 	return 0;
 }
@@ -322,6 +326,22 @@ LRESULT CWorkWnd::OnNIMessage(WPARAM,LPARAM lParam)
 	return 1;
 }
 
+LRESULT CWorkWnd::OnOSDMessage(WPARAM wParam,LPARAM lParam)
+{
+	switch(lParam)
+	{
+	case hkoTopMost:
+		{
+			if(CHook::GetHook()->m_mapWndInfo[(HWND)wParam].fTopMost)
+				m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
+			else
+				m_osdWnd.ShowText(_T("TopMost:Off"),COSDWnd::osdpCenter);
+		}
+		break;
+	}
+	return 1;
+}
+
 void CWorkWnd::OnEnable(WORD,HWND)
 {
 	CHook::GetHook()->Enable();
@@ -338,19 +358,21 @@ void CWorkWnd::OnDisable(WORD,HWND)
 
 void CWorkWnd::OnRestore(WORD,HWND)
 {
-	CHook::GetHook()->Restore();
-/*
-	static COSDWnd wnd;
-	ASSERT(wnd.Create(*this));
+//	CHook::GetHook()->Restore();
+
+
+//	ASSERT(wnd.Create(*this));
 
 
 
-	::SetLayeredWindowAttributes(wnd,0x00ffffff,150,LWA_COLORKEY
+//	::SetLayeredWindowAttributes(wnd,0x00ffffff,150,LWA_COLORKEY
 		//|ULW_ALPHA
-		);
+//		);
+		m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
+//			m_osdWnd.ShowText(_T("TopMost:Off"),COSDWnd::osdpCenter);
 
-	wnd.ShowText(_T("any text"),COSDWnd::osdpCenter);
-	*/
+//	m_osdWnd.ShowText(_T("any text"),COSDWnd::osdpCenter);
+	
 }
 
 void CWorkWnd::OnViewingWnds(WORD,HWND)
