@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <map>
+#include "OSDWnd.h"
 
 typedef struct tagHotKeyInfo
 {
@@ -24,6 +25,8 @@ enum enHotKeyOperations
 	hkoToggleCaption,
 	hkoCount
 };
+
+static COSDWnd m_osdWnd;
 
 class CHook
 {

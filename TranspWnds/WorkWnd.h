@@ -6,13 +6,15 @@
 class CWorkWnd :
 	public CULWnd
 {
-protected:
-	CULMenu m_Menu;
-	NOTIFYICONDATA m_niData;
+public:
 	enum 
 	{
 		NIM_MESSAGE=WM_APP+1,
+		OSDM_MESSAGE
 	};
+protected:
+	CULMenu m_Menu;
+	NOTIFYICONDATA m_niData;
 
 	CULProfileReg m_ProfileReg;
 
@@ -28,6 +30,7 @@ protected:
 	LRESULT OnTimer(WPARAM,LPARAM);
 	LRESULT OnDestroy(WPARAM,LPARAM);
 	LRESULT OnNIMessage(WPARAM,LPARAM);
+	LRESULT OnOSDMessage(WPARAM,LPARAM);
 
 	void OnEnable(WORD,HWND);
 	void OnDisable(WORD,HWND);

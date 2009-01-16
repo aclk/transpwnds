@@ -1,7 +1,6 @@
 #define _WIN32_WINNT 0x0500
 #include "Hook.h"
-
-#include "ULLibNS.h"
+#include "WorkWnd.h"
 
 
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam);
@@ -214,6 +213,8 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 			m_mapWndInfo[hWnd]=wi;
 		}
 		::SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+			(WPARAM)hWnd,(LPARAM)hkoTopMost);
 		return 1;						
 	}
 	else
@@ -223,6 +224,8 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 		{
 			iterItem._Mynode()->_Myval.second.fTopMost=FALSE;
 			::SetWindowPos(hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+			CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+				(WPARAM)hWnd,(LPARAM)hkoTopMost);
 		}
 	}
 	return 1;
@@ -265,7 +268,7 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 		return 0;
 	fStartMoveWnd=true;
 	ptStart=lpMouseHookStruct->pt;
-	return 1;
+	return 0;
 }
 
 LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)

@@ -7,6 +7,9 @@ class COSDWnd :
 protected:
 	CULStr m_strText;
 	RECT m_rcPadding;
+	const int m_constIdTimer;
+	UINT m_nCurTimout;
+	BYTE m_Alpha;
 public:
 	enum enOSDPos
 	{
@@ -23,4 +26,5 @@ public:
 	void ShowText(TCHAR* pszText,enOSDPos osdPos);
 protected:
 	virtual LRESULT OnPaint(WPARAM,LPARAM);
+	virtual LRESULT OnTimer(WPARAM,LPARAM);
 };
