@@ -4,17 +4,26 @@
 #include "resource.h"
 #include "PropHotKeys.h"
 #include "PropSystem.h"
-#include "PropSheetOptions.h"
+#include "PropTransparent.h"
+
+#include "OSDWnd.h"
+
+#include "AboutDlg.h"
+
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
 {
 	MessageMap.AddMessage<CWorkWnd>(WM_CREATE,&CWorkWnd::OnCreate);
 	MessageMap.AddMessage<CWorkWnd>(WM_DESTROY,&CWorkWnd::OnDestroy);
 	MessageMap.AddMessage<CWorkWnd>(NIM_MESSAGE,&CWorkWnd::OnNIMessage);
+	MessageMap.AddMessage<CWorkWnd>(WM_TIMER,&CWorkWnd::OnTimer);
 
 	MessageMap.AddCommand<CWorkWnd>(IDM_ENABLE,&CWorkWnd::OnEnable);
 	MessageMap.AddCommand<CWorkWnd>(IDM_DISABLE,&CWorkWnd::OnDisable);
 	MessageMap.AddCommand<CWorkWnd>(IDM_RESTORE,&CWorkWnd::OnRestore);
+
+	MessageMap.AddCommand<CWorkWnd>(IDM_VIEWING,&CWorkWnd::OnViewingWnds);	
+
 	MessageMap.AddCommand<CWorkWnd>(IDM_OPTIONS,&CWorkWnd::OnOptions);
 
 	MessageMap.AddCommand<CWorkWnd>(IDM_ABOUT,&CWorkWnd::OnAbout);
@@ -38,8 +47,9 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_DISABLE,CULStrTable(IDS_MENU_DISABLE));
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_RESTORE,CULStrTable(IDS_MENU_RESTORE));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,3,NULL);			
+	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_VIEWING,CULStrTable(IDS_MENU_VIEWING));			
+	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,3,NULL);			
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_OPTIONS,CULStrTable(IDS_MENU_OPTIONS));			
-//	m_Menu.AppendMenu((IsAutoRun())?MF_CHECKED:0)|MF_BYCOMMAND, IDM_AUTORUN, _T("AutoRun"));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,5,NULL);
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_ABOUT,CULStrTable(IDS_MENU_ABOUT));			
 	m_Menu.AppendMenu(MF_BYPOSITION|MF_SEPARATOR,5,NULL);
@@ -63,6 +73,8 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	LoadSettings();
 
 	CHook::GetHook()->Enable();
+
+	SetTimer(1,2000);
 
 	return 0;
 }
@@ -270,8 +282,28 @@ void CWorkWnd::SaveSettings()
 		CHook::GetHook()->m_bTranspStep);
 }
 
+LRESULT CWorkWnd::OnTimer(WPARAM,LPARAM)
+{
+	for(std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=
+		CHook::GetHook()->m_mapWndInfo.begin();
+		iterItem!=CHook::GetHook()->m_mapWndInfo.end();iterItem++)
+		if(!::IsWindow(iterItem->first))
+		{
+			if(m_ViewingWndsDlg.IsWindow())
+				m_ViewingWndsDlg.DeleteItem(iterItem->first);
+			CHook::GetHook()->m_mapWndInfo.erase(iterItem->first);
+			break;
+		}
+		else
+			if(m_ViewingWndsDlg.IsWindow())
+				m_ViewingWndsDlg.InsertItem(iterItem->first);
+	return 1;
+}
+
+
 LRESULT CWorkWnd::OnDestroy(WPARAM,LPARAM)
 {
+	KillTimer(1);
 	Shell_NotifyIcon(NIM_DELETE,&m_niData);
 	::PostQuitMessage(0);
 	return 0;
@@ -307,25 +339,63 @@ void CWorkWnd::OnDisable(WORD,HWND)
 void CWorkWnd::OnRestore(WORD,HWND)
 {
 	CHook::GetHook()->Restore();
+/*
+	static COSDWnd wnd;
+	ASSERT(wnd.Create(*this));
+
+
+
+	::SetLayeredWindowAttributes(wnd,0x00ffffff,150,LWA_COLORKEY
+		//|ULW_ALPHA
+		);
+
+	wnd.ShowText(_T("any text"),COSDWnd::osdpCenter);
+	*/
+}
+
+void CWorkWnd::OnViewingWnds(WORD,HWND)
+{
+	if(m_ViewingWndsDlg.IsWindow())
+	{
+		m_ViewingWndsDlg.SetForegroundWindow();
+		m_ViewingWndsDlg.SetActiveWindow();
+		return;
+	}
+	m_ViewingWndsDlg.Create(IDD_VIEWING_WINDOWS,NULL);
+	m_ViewingWndsDlg.ShowWindow(SW_SHOW);
 }
 
 void CWorkWnd::OnOptions(WORD,HWND)
 {
-	CPropSheetOptions ps;
+	if(m_propsheetOptions.IsWindow())
+	{
+		m_propsheetOptions.SetForegroundWindow();
+		m_propsheetOptions.SetActiveWindow();
+		return;
+	}
 	CPropHotKeys propHotKeys;
 	for(int i=0;i<hkoCount;++i)
 		propHotKeys.m_arHotkey[i]=CHook::GetHook()->m_arHotKeyInfo[i];
-	ps.AddPage(propHotKeys.Create(IDD_PROPPAGE_HOTKEYS));	
+	m_propsheetOptions.AddPage(propHotKeys.Create(IDD_PROPPAGE_HOTKEYS));	
+
+	CPropTransparent propTransparent;
+	propTransparent.m_nMinTransparentLevel=int(100*double(255-CHook::GetHook()->m_bMinTranspVal)/255);
+	propTransparent.m_nTransparentLevelStep=int(100*double(CHook::GetHook()->m_bTranspStep)/255);
+	m_propsheetOptions.AddPage(propTransparent.Create(IDD_PROPPAGE_TRANSPARENT));		
 
 	CPropSystem propSystem;
 	propSystem.m_fAutoRun=m_ProfileReg.IsAutoRun(CULStrTable(IDS_APP_NAME));
-	ps.AddPage(propSystem.Create(IDD_PROPPAGE_SYSTEM));	
+	m_propsheetOptions.AddPage(propSystem.Create(IDD_PROPPAGE_SYSTEM));	
 
-	ps.m_psh.dwFlags=PSH_NOAPPLYNOW|PSH_NOCONTEXTHELP;
-	if(ps.Create(*this,CULStrTable(IDS_OPTIONSDLG_CAPTION),0)==IDOK)
+	m_propsheetOptions.m_psh.dwFlags=PSH_NOAPPLYNOW|PSH_NOCONTEXTHELP;
+	if(m_propsheetOptions.Create(*this,CULStrTable(IDS_OPTIONSDLG_CAPTION),0)==IDOK)
 	{
 		for(int i=0;i<hkoCount;++i)
 			CHook::GetHook()->m_arHotKeyInfo[i]=propHotKeys.m_arHotkey[i];
+
+		CHook::GetHook()->m_bMinTranspVal=255-int(255*double(propTransparent.m_nMinTransparentLevel)/100);
+		CHook::GetHook()->m_bTranspStep=int(255*double(propTransparent.m_nTransparentLevelStep)/100);
+
 		SaveSettings();
 		if(propSystem.m_fAutoRun)
 		{
@@ -340,7 +410,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 
 void CWorkWnd::OnAbout(WORD,HWND)
 {
-	CULDlg dlg;
+	CAboutDlg dlg;
 	dlg.CreateModal(IDD_ABOUTBOX,*this);
 }
 

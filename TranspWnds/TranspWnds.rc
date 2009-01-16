@@ -68,15 +68,25 @@ IDI_MAINICON            ICON                    "Win32Wiz.ico"
 // Dialog
 //
 
-IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 46
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
 CAPTION "About TranspWnds"
 FONT 8, "MS Shell Dlg", 0, 0, 0x1
 BEGIN
-    ICON            IDI_MAINICON,IDC_STATIC,11,17,20,20
-    LTEXT           "TranspWnds Version 1.2.2",IDC_STATIC,40,10,119,8,SS_NOPREFIX
-    LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,25,119,8
+    ICON            IDI_MAINICON,IDC_STATIC,11,13,20,20
+    LTEXT           "TranspWnds Version 1.2.8",IDC_STATIC,40,9,119,8,SS_NOPREFIX
+    LTEXT           "Copyright © UncleLab, 2009",IDC_STATIC,40,19,119,8
     DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+    LTEXT           "Homepage:",IDC_STATIC,40,29,38,8
+END
+
+IDD_VIEWING_WINDOWS DIALOGEX 0, 0, 305, 188
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+EXSTYLE WS_EX_TOPMOST | WS_EX_TOOLWINDOW
+CAPTION "Viewing windows"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    CONTROL         "",IDC_LIST_VIEWING_WINDOWS,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,7,292,176
 END
 
 
@@ -93,7 +103,15 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 228
         TOPMARGIN, 7
-        BOTTOMMARGIN, 48
+        BOTTOMMARGIN, 39
+    END
+
+    IDD_VIEWING_WINDOWS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 298
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 181
     END
 END
 #endif    // APSTUDIO_INVOKED
@@ -112,7 +130,7 @@ BEGIN
     IDS_MENU_QUIT           "Quit"
     IDS_APP_NAME            "TranspWnds"
     IDS_MENU_OPTIONS        "Options"
-    IDS_OPTIONSDLG_CAPTION  "Options dialog"
+    IDS_OPTIONSDLG_CAPTION  "Options"
     IDS_OPTOINS_COMBO_LBTN  "left button"
     IDS_OPTOINS_COMBO_RBTN  "right button"
     IDS_OPTOINS_COMBO_MBTN  "middle button"
@@ -122,6 +140,12 @@ STRINGTABLE
 BEGIN
     IDS_COMPANY_NAME        "UncleLab"
     IDS_MENU_ABOUT          "About"
+    IDS_MENU_VIEWING        "Viewing windows"
+    IDS_VIEWING_LIST_COLUMN_CAPTION "Window caption"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT "Transparent"
+    IDS_VIEWING_LIST_COLUMN_TRANSPARENT_LEVEL "Transparent level"
+    IDS_VIEWING_LIST_COLUMN_TOPMOST "Top most"
+    IDS_VIEWING_LIST_COLUMN_HIDECAPTION "Hide caption"
 END
 
 #endif    // Russian resources
@@ -139,51 +163,12 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 
 /////////////////////////////////////////////////////////////////////////////
 //
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,2,2,0
- PRODUCTVERSION 1,2,2,0
- FILEFLAGSMASK 0x17L
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x1L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "041904b0"
-        BEGIN
-            VALUE "CompanyName", "UncleLab"
-            VALUE "FileDescription", "TranspWn"
-            VALUE "FileVersion", "1.2.2"
-            VALUE "InternalName", "TranspWn"
-            VALUE "LegalCopyright", "Copyright (C) 2009"
-            VALUE "OriginalFilename", "TranspWn"
-            VALUE "ProductName", " TranspWn"
-            VALUE "ProductVersion", "1.2.2"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x419, 1200
-    END
-END
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 // Dialog
 //
 
 IDD_PROPPAGE_HOTKEYS DIALOGEX 0, 0, 228, 183
 STYLE DS_SETFONT | DS_FIXEDSYS | DS_CENTER | WS_CHILD | WS_DISABLED | WS_CAPTION
-CAPTION "Hotkey"
+CAPTION "Hotkeys"
 FONT 8, "MS Shell Dlg", 0, 0, 0x0
 BEGIN
     GROUPBOX        "Transparent",IDC_STATIC,7,7,214,27
@@ -232,6 +217,17 @@ BEGIN
     CONTROL         "Run on Windows startup",IDC_CHECK_AUTORUN,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,13,17,95,10
 END
 
+IDD_PROPPAGE_TRANSPARENT DIALOGEX 0, 0, 228, 127
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_CHILD | WS_DISABLED | WS_CAPTION
+CAPTION "Transparency"
+FONT 8, "MS Shell Dlg", 0, 0, 0x0
+BEGIN
+    CONTROL         "",IDC_SLIDER_MIN_TRANSP_LEVEL,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,18,210,18
+    GROUPBOX        "Min transparent level",IDC_STATIC,7,7,214,30
+    CONTROL         "",IDC_SLIDER_TRANSP_LEVEL_STEP,"msctls_trackbar32",TBS_AUTOTICKS | TBS_NOTICKS | TBS_TOOLTIPS | WS_TABSTOP,9,51,210,18
+    GROUPBOX        "Step change of transparent level",IDC_STATIC,7,40,214,30
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -256,8 +252,55 @@ BEGIN
         TOPMARGIN, 7
         BOTTOMMARGIN, 96
     END
+
+    IDD_PROPPAGE_TRANSPARENT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 221
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 120
+    END
 END
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,2,8,0
+ PRODUCTVERSION 1,2,8,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "041904b0"
+        BEGIN
+            VALUE "CompanyName", "UncleLab"
+            VALUE "FileDescription", "TranspWnd"
+            VALUE "FileVersion", "1.2.8"
+            VALUE "InternalName", "TranspWnd"
+            VALUE "LegalCopyright", "Copyright (C) 2009"
+            VALUE "OriginalFilename", "TranspWnd"
+            VALUE "ProductName", " TranspWnd"
+            VALUE "ProductVersion", "1.2.6"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x419, 1200
+    END
+END
 
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
