@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PropOSD.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PropSheetOptions.cpp"
 				>
 			</File>
@@ -240,6 +244,10 @@
 			</File>
 			<File
 				RelativePath=".\PropHotKeys.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropOSD.h"
 				>
 			</File>
 			<File

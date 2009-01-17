@@ -26,7 +26,7 @@ enum enHotKeyOperations
 	hkoCount
 };
 
-static COSDWnd m_osdWnd;
+static COSDWnd g_osdWnd;
 
 class CHook
 {
