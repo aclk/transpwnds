@@ -5,7 +5,8 @@ COSDWnd::COSDWnd(void):
 	CULWnd(),
 	m_constIdTimer(1),
 	m_nCurTimout(500),
-	m_Alpha(255)
+	m_Alpha(255),
+	m_osdPos(osdpCenter)
 {
 	m_rcPadding.left=30;
 	m_rcPadding.top=30;
@@ -39,9 +40,9 @@ BOOL COSDWnd::Create(HWND hwndParent)
 //	if(!RegisterClassEx(&wcex))
 //		return FALSE;
 
-	return CULWnd::CreateEx(WS_EX_LAYERED,wcex.lpszClassName,NULL,WS_POPUP|WS_VISIBLE,100,10,500,200,hwndParent,NULL);
+	return CULWnd::CreateEx(WS_EX_LAYERED,wcex.lpszClassName,NULL,WS_POPUP,100,10,500,200,hwndParent,NULL);
 }
-void COSDWnd::ShowText(TCHAR* pszText,enOSDPos osdPos)
+void COSDWnd::ShowText(LPCTSTR pszText)
 {
 	m_strText=pszText;
 
@@ -59,7 +60,7 @@ void COSDWnd::ShowText(TCHAR* pszText,enOSDPos osdPos)
 	dc.DrawText(m_strText,m_strText.GetLen(),&rc,DT_CALCRECT);
 	int nScreenWidth=::GetSystemMetrics(SM_CXFULLSCREEN);
 	int nScreenHeight=::GetSystemMetrics(SM_CYFULLSCREEN);
-	switch(osdPos)
+	switch(m_osdPos)
 	{
 		case osdpTopLeft:
 			{
@@ -101,10 +102,21 @@ void COSDWnd::ShowText(TCHAR* pszText,enOSDPos osdPos)
 	m_Alpha=255;
 	m_nCurTimout=500;
 	::SetLayeredWindowAttributes(*this,0x00ffffff,m_Alpha,LWA_COLORKEY|LWA_ALPHA);
+	ShowWindow(SW_SHOW);
 	SetTimer(m_constIdTimer,m_nCurTimout);
 	SetWindowPos(HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
 	InvalidateRect(NULL,TRUE);
 }
+
+void COSDWnd::SetPos(enOSDPos osdPos)
+{
+	m_osdPos=osdPos;
+}
+COSDWnd::enOSDPos COSDWnd::GetPos()
+{
+	return m_osdPos;
+}
+
 //===================================
 LRESULT COSDWnd::OnPaint(WPARAM,LPARAM)
 {
@@ -139,6 +151,7 @@ LRESULT COSDWnd::OnTimer(WPARAM idTmr,LPARAM)
 		if(m_Alpha==0)
 		{
 			KillTimer(m_constIdTimer);
+			ShowWindow(SW_HIDE);
 			return 0;
 		}
 		m_Alpha=BYTE((m_Alpha)/1.1);
@@ -151,3 +164,4 @@ LRESULT COSDWnd::OnTimer(WPARAM idTmr,LPARAM)
 	}	
 	return 0;
 }
+

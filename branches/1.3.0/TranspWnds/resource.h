@@ -25,6 +25,7 @@
 #define IDM_QUIT                        107
 #define IDS_OPTIONSDLG_CAPTION          108
 #define IDM_VIEWING                     108
+#define IDD_PROPPAGE_OSD                108
 #define IDS_OPTOINS_TOPMOST_COMBO_LBTN  109
 #define IDS_OPTOINS_COMBO_LBTN          109
 #define IDS_OPTOINS_TOPMOST_COMBO_RBTN  110
@@ -60,10 +61,16 @@
 #define IDC_SLIDER_TRANSP_LEVEL_STEP    1014
 #define IDC_LIST_VIEWING_WINDOWS        1014
 #define IDC_COMBO_SIZE_MSG              1015
+#define IDC_RADIO_TOPLEFT               1015
 #define IDC_CHECK_SIZE_ALT              1016
+#define IDC_RADIO_TOPRIGHT              1016
 #define IDC_CHECK_SIZE_CTRL             1017
+#define IDC_RADIO_CENTER                1017
 #define IDC_CHECK_SIZE_SHIFT            1018
+#define IDC_RADIO_BOTLEFT               1018
 #define IDC_CHECK_SIZE_WIN              1019
+#define IDC_RADIO5                      1019
+#define IDC_RADIO_BOTRIGHT              1019
 #define IDC_COMBO_TOGGLECAPTION_MSG     1020
 #define IDC_CHECK_TOGGLECAPTION_ALT     1021
 #define IDC_CHECK_TOGGLECAPTION_CTRL    1022
@@ -75,9 +82,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        104
+#define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1015
+#define _APS_NEXT_CONTROL_VALUE         1020
 #define _APS_NEXT_SYMED_VALUE           109
 #endif
 #endif

@@ -5,8 +5,9 @@
 #include "PropHotKeys.h"
 #include "PropSystem.h"
 #include "PropTransparent.h"
+#include "PropOSD.h"
 
-
+#include<sstream>
 
 #include "AboutDlg.h"
 
@@ -78,7 +79,7 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 
 	SetTimer(1,2000);
 
-	ASSERT(m_osdWnd.Create(*this));
+	ASSERT(g_osdWnd.Create(*this));
 
 	return 0;
 }
@@ -214,6 +215,14 @@ void CWorkWnd::LoadSettings()
 		CHook::GetHook()->m_bTranspStep=(BYTE)dwVal;
 	else
 		CHook::GetHook()->m_bTranspStep=10;
+
+	//загрузка параметров позиционирования OSD окна
+	if(m_ProfileReg.GetProfileInt(_T("OSD"),_T("OSDAlign"),&dwVal))
+		g_osdWnd.SetPos((COSDWnd::enOSDPos)dwVal);
+	else
+		g_osdWnd.SetPos(COSDWnd::osdpCenter);
+	
+
 }
 
 void CWorkWnd::SaveSettings()
@@ -284,6 +293,9 @@ void CWorkWnd::SaveSettings()
 		CHook::GetHook()->m_bMinTranspVal);
 	m_ProfileReg.WriteProfileInt(_T("TranspVals"),_T("TranspStep"),
 		CHook::GetHook()->m_bTranspStep);
+	//сохранение параметров позиционирования OSD окна
+	m_ProfileReg.WriteProfileInt(_T("OSD"),_T("OSDAlign"),(DWORD)g_osdWnd.GetPos());
+
 }
 
 LRESULT CWorkWnd::OnTimer(WPARAM,LPARAM)
@@ -331,11 +343,29 @@ LRESULT CWorkWnd::OnOSDMessage(WPARAM wParam,LPARAM lParam)
 	switch(lParam)
 	{
 	case hkoTopMost:
+		if(CHook::GetHook()->m_mapWndInfo[(HWND)wParam].fTopMost)
+			g_osdWnd.ShowText(_T("TopMost On"));
+		else
+			g_osdWnd.ShowText(_T("TopMost Off"));
+		break;
+	case hkoToggleCaption:
+		if(CHook::GetHook()->m_mapWndInfo[(HWND)wParam].dwStyle)
+			g_osdWnd.ShowText(_T("Caption Off"));
+		else
+			g_osdWnd.ShowText(_T("Caption On"));
+		break;
+	case hkoTransp:
 		{
-			if(CHook::GetHook()->m_mapWndInfo[(HWND)wParam].fTopMost)
-				m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
-			else
-				m_osdWnd.ShowText(_T("TopMost:Off"),COSDWnd::osdpCenter);
+			std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=CHook::GetHook()->m_mapWndInfo.find((HWND)wParam);
+			if((iterItem==CHook::GetHook()->m_mapWndInfo.end())||(!iterItem._Mynode()->_Myval.second.fAlpha))
+			{
+				g_osdWnd.ShowText(_T("Disable"));
+				break;
+			}
+			std::basic_stringstream<TCHAR> ss;
+			ss<<int(100*double(255-CHook::GetHook()->CHook::GetHook()->m_mapWndInfo[(HWND)wParam].bAlpha)/255);
+			ss<<_T("%");
+			g_osdWnd.ShowText(ss.str().c_str());
 		}
 		break;
 	}
@@ -358,7 +388,7 @@ void CWorkWnd::OnDisable(WORD,HWND)
 
 void CWorkWnd::OnRestore(WORD,HWND)
 {
-//	CHook::GetHook()->Restore();
+	CHook::GetHook()->Restore();
 
 
 //	ASSERT(wnd.Create(*this));
@@ -368,7 +398,7 @@ void CWorkWnd::OnRestore(WORD,HWND)
 //	::SetLayeredWindowAttributes(wnd,0x00ffffff,150,LWA_COLORKEY
 		//|ULW_ALPHA
 //		);
-		m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
+//		m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
 //			m_osdWnd.ShowText(_T("TopMost:Off"),COSDWnd::osdpCenter);
 
 //	m_osdWnd.ShowText(_T("any text"),COSDWnd::osdpCenter);
@@ -405,6 +435,10 @@ void CWorkWnd::OnOptions(WORD,HWND)
 	propTransparent.m_nTransparentLevelStep=int(100*double(CHook::GetHook()->m_bTranspStep)/255);
 	m_propsheetOptions.AddPage(propTransparent.Create(IDD_PROPPAGE_TRANSPARENT));		
 
+	CPropOSD propOSD;
+	propOSD.m_osdPos=(CPropOSD::enOSDPos)g_osdWnd.GetPos();
+	m_propsheetOptions.AddPage(propOSD.Create(IDD_PROPPAGE_OSD));		
+
 	CPropSystem propSystem;
 	propSystem.m_fAutoRun=m_ProfileReg.IsAutoRun(CULStrTable(IDS_APP_NAME));
 	m_propsheetOptions.AddPage(propSystem.Create(IDD_PROPPAGE_SYSTEM));	
@@ -417,6 +451,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 
 		CHook::GetHook()->m_bMinTranspVal=255-int(255*double(propTransparent.m_nMinTransparentLevel)/100);
 		CHook::GetHook()->m_bTranspStep=int(255*double(propTransparent.m_nTransparentLevelStep)/100);
+		g_osdWnd.SetPos((COSDWnd::enOSDPos)propOSD.m_osdPos);
 
 		SaveSettings();
 		if(propSystem.m_fAutoRun)
