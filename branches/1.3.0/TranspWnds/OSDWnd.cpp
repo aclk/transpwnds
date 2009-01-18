@@ -6,12 +6,17 @@ COSDWnd::COSDWnd(void):
 	m_constIdTimer(1),
 	m_nCurTimout(500),
 	m_Alpha(255),
-	m_osdPos(osdpCenter)
+	m_osdPos(osdpCenter),
+	m_clrText(0xff0000),
+	m_clrTextShadow(0xaaaaaa)
 {
 	m_rcPadding.left=30;
 	m_rcPadding.top=30;
 	m_rcPadding.right=30;
 	m_rcPadding.bottom=30;
+	
+	::GetObject(::GetStockObject(DEFAULT_GUI_FONT),sizeof(LOGFONT),&m_lf);
+	m_lf.lfHeight=-50;
 	
 	MessageMap.AddMessage<COSDWnd>(WM_PAINT,&COSDWnd::OnPaint);
 	MessageMap.AddMessage<COSDWnd>(WM_TIMER,&COSDWnd::OnTimer);
@@ -50,14 +55,12 @@ void COSDWnd::ShowText(LPCTSTR pszText)
 	RECT rc={0,0,0,0};
 	CULClientDC dc(*this);
 
-	LOGFONT lf;
-	::GetObject(::GetStockObject(DEFAULT_GUI_FONT),sizeof(LOGFONT),&lf);
-	lf.lfHeight=-50;
-	HFONT hf=::CreateFontIndirect(&lf);
-	dc.SelectObject(hf);
-
+	CULFont font;
+	font.CreateFontIndirect(&m_lf);
+	HFONT hf=(HFONT)dc.SelectObject(font);
 
 	dc.DrawText(m_strText,m_strText.GetLen(),&rc,DT_CALCRECT);
+	dc.SelectObject(hf);
 	int nScreenWidth=::GetSystemMetrics(SM_CXFULLSCREEN);
 	int nScreenHeight=::GetSystemMetrics(SM_CYFULLSCREEN);
 	switch(m_osdPos)
@@ -117,30 +120,63 @@ COSDWnd::enOSDPos COSDWnd::GetPos()
 	return m_osdPos;
 }
 
+void COSDWnd::SetTextColor(COLORREF clrText)
+{
+	m_clrText=clrText;
+}
+
+COLORREF COSDWnd::GetTextColor()
+{
+	return m_clrText;
+}
+
+void COSDWnd::SetTextShadowColor(COLORREF clrTextShadow)
+{
+	m_clrTextShadow=clrTextShadow;
+}
+
+COLORREF COSDWnd::GetTextShadowColor()
+{
+	return m_clrTextShadow;
+}
+
+void COSDWnd::SetFont(LOGFONT& lf)
+{
+	memcpy(&m_lf,&lf,sizeof(LOGFONT));
+}
+BOOL COSDWnd::GetFont(LOGFONT* plf)
+{
+	if(!plf)
+		return FALSE;
+	memcpy(plf,&m_lf,sizeof(LOGFONT));
+	return TRUE;
+}
+
 //===================================
 LRESULT COSDWnd::OnPaint(WPARAM,LPARAM)
 {
-	LOGFONT lf;
-	::GetObject(::GetStockObject(DEFAULT_GUI_FONT),sizeof(LOGFONT),&lf);
-	lf.lfHeight=-50;
-	HFONT hf=::CreateFontIndirect(&lf);
+	CULFont font;
+	font.CreateFontIndirect(&m_lf);
 
 	CULPaintDC dc(*this);
 
-	dc.SelectObject(hf);
+	HFONT hf=(HFONT)dc.SelectObject(font);
 
 	dc.SetBkMode(CULPaintDC::bmTRANSPARENT);
-	dc.SetTextColor(0xaaaaaa);
+	dc.SetTextColor(m_clrTextShadow);
 	RECT rc;
 	GetClientRect(&rc);
 	dc.DrawText(m_strText,m_strText.GetLen(),&rc,DT_CENTER);
 
-	dc.SetTextColor(0xff0000);
-	rc.left-=3;
-	rc.top-=3;
-	rc.right-=3;
-	rc.bottom-=3;
+	dc.SetTextColor(m_clrText);
+	int nTextShift=abs(m_lf.lfHeight/10);
+	rc.left-=nTextShift;
+	rc.top-=nTextShift;
+	rc.right-=nTextShift;
+	rc.bottom-=nTextShift;
 	dc.DrawText(m_strText,m_strText.GetLen(),&rc,DT_CENTER);
+
+	dc.SelectObject(hf);
 	return 0;
 }
 

@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Serialize.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ViewingWndsDlg.cpp"
 				>
 			</File>
