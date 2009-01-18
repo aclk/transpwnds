@@ -21,6 +21,9 @@ protected:
 	const int m_constIdTimer;
 	UINT m_nCurTimout;
 	BYTE m_Alpha;
+	COLORREF m_clrText;
+	COLORREF m_clrTextShadow;
+	LOGFONT m_lf;
 public:
 	COSDWnd(void);
 	~COSDWnd(void);
@@ -28,6 +31,12 @@ public:
 	void ShowText(LPCTSTR pszText);
 	void SetPos(enOSDPos osdPos);
 	COSDWnd::enOSDPos GetPos();
+	void SetTextColor(COLORREF clrText);
+	COLORREF GetTextColor();
+	void SetTextShadowColor(COLORREF clrTextShadow);
+	COLORREF GetTextShadowColor();
+	void SetFont(LOGFONT& lf);
+	BOOL GetFont(LOGFONT* plf);
 protected:
 	virtual LRESULT OnPaint(WPARAM,LPARAM);
 	virtual LRESULT OnTimer(WPARAM,LPARAM);

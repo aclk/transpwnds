@@ -72,11 +72,16 @@
 #define IDC_RADIO5                      1019
 #define IDC_RADIO_BOTRIGHT              1019
 #define IDC_COMBO_TOGGLECAPTION_MSG     1020
+#define IDC_BUTTON_FONT                 1020
 #define IDC_CHECK_TOGGLECAPTION_ALT     1021
+#define IDC_BUTTON_TEXTCOLOR            1021
 #define IDC_CHECK_TOGGLECAPTION_CTRL    1022
+#define IDC_BUTTON_TEXTSHADOWCOLOR      1022
 #define IDC_CHECK_TOGGLECAPTION_SHIFT   1023
+#define IDC_STATIC_TEXTCOLOR            1023
 #define IDC_CHECK_TOPMOST_WIN2          1024
 #define IDC_CHECK_TOGGLECAPTION_WIN     1024
+#define IDC_STATIC_TEXTSHADOWCOLOR      1024
 
 // Next default values for new objects
 // 
@@ -84,7 +89,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        105
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1020
+#define _APS_NEXT_CONTROL_VALUE         1024
 #define _APS_NEXT_SYMED_VALUE           109
 #endif
 #endif

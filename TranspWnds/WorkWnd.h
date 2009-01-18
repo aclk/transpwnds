@@ -2,6 +2,7 @@
 #include "ULLibNS.h"
 #include "ViewingWndsDlg.h"
 #include "PropSheetOptions.h"
+#include "OSDWnd.h"
 
 class CWorkWnd :
 	public CULWnd
@@ -12,6 +13,7 @@ public:
 		NIM_MESSAGE=WM_APP+1,
 		OSDM_MESSAGE
 	};
+	COSDWnd m_osdWnd;
 protected:
 	CULMenu m_Menu;
 	NOTIFYICONDATA m_niData;
