@@ -3,7 +3,8 @@
 #include "Hook.h"
 
 void CWorkWnd::LoadSettings()
-{
+{	
+
 	DWORD dwVal=0;
 	//загрузка горячих клавиш для тулзы прозрачности
 	if(m_ProfileReg.GetProfileInt(_T("HotKeys"),_T("TranspAlt"),&dwVal))
@@ -133,7 +134,6 @@ void CWorkWnd::LoadSettings()
 		CHook::GetHook()->m_bTranspStep=(BYTE)dwVal;
 	else
 		CHook::GetHook()->m_bTranspStep=10;
-
 	//загрузка параметров позиционирования OSD окна
 	if(m_ProfileReg.GetProfileInt(_T("OSD"),_T("Align"),&dwVal))
 		m_osdWnd.SetPos((COSDWnd::enOSDPos)dwVal);
@@ -153,6 +153,11 @@ void CWorkWnd::LoadSettings()
 	DWORD dwSizeOfLf=sizeof(lf);
 	if(m_ProfileReg.GetProfileBinary(_T("OSD"),_T("Font"),(void*)&lf,&dwSizeOfLf))
 		m_osdWnd.SetFont(lf);
+	//загрузка параметра обновления
+	if(m_ProfileReg.GetProfileInt(_T("Update"),_T("UpdateType"),&dwVal))
+		m_Updater.m_UpdateType=(CUpdater::enUpdateType)dwVal;
+	else
+		m_Updater.m_UpdateType=CUpdater::utAtStartEvery24;
 }
 
 void CWorkWnd::SaveSettings()
@@ -233,4 +238,6 @@ void CWorkWnd::SaveSettings()
 	m_osdWnd.GetFont(&lf);
 	DWORD dwSizeOfLf=sizeof(lf);
 	m_ProfileReg.WriteProfileBinary(_T("OSD"),_T("Font"),(void*)&lf,dwSizeOfLf);
+	//сохранение параметра обновления
+	m_ProfileReg.WriteProfileInt(_T("Update"),_T("UpdateType"),(DWORD)m_Updater.m_UpdateType);
 }
