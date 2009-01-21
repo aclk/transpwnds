@@ -217,6 +217,18 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ULHttpFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\UpdateProgressDlg.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Updater.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ViewingWndsDlg.cpp"
 				>
 			</File>
@@ -268,6 +280,18 @@
 			</File>
 			<File
 				RelativePath=".\resource.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ULHttpFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\UpdateProgressDlg.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Updater.h"
 				>
 			</File>
 			<File

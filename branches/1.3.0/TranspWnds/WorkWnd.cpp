@@ -18,6 +18,7 @@ CWorkWnd::CWorkWnd(void):
 	MessageMap.AddMessage<CWorkWnd>(WM_DESTROY,&CWorkWnd::OnDestroy);
 	MessageMap.AddMessage<CWorkWnd>(NIM_MESSAGE,&CWorkWnd::OnNIMessage);
 	MessageMap.AddMessage<CWorkWnd>(OSDM_MESSAGE,&CWorkWnd::OnOSDMessage);
+	MessageMap.AddMessage<CWorkWnd>(UDM_CHECKFORUPDATE,&CWorkWnd::OnCheckForUpdate);
 
 	MessageMap.AddMessage<CWorkWnd>(WM_TIMER,&CWorkWnd::OnTimer);
 
@@ -39,11 +40,10 @@ CWorkWnd::~CWorkWnd(void)
 }
 
 LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
-{
+{	
 	HICON hIcon=(HICON)::LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),
 		IMAGE_ICON,0,0,LR_DEFAULTSIZE);
 	SetIcon(hIcon,TRUE);
-
 
 	m_Menu.CreatePopupMenu();
 	m_Menu.AppendMenu(MF_GRAYED|MF_DISABLED|MF_BYCOMMAND,IDM_ENABLE,CULStrTable(IDS_MENU_ENABLE));
@@ -70,7 +70,6 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	m_niData.uID=NIM_MESSAGE;
 	if(!Shell_NotifyIcon(NIM_ADD,&m_niData))
 		DestroyWindow();
-
 
 	m_ProfileReg.SetRegistryKey(CULStrTable(IDS_COMPANY_NAME),CULStrTable(IDS_APP_NAME));
 	LoadSettings();
@@ -161,6 +160,13 @@ LRESULT CWorkWnd::OnOSDMessage(WPARAM wParam,LPARAM lParam)
 	return 1;
 }
 
+LRESULT CWorkWnd::OnCheckForUpdate(WPARAM wParam,LPARAM)
+{
+	m_Updater.SetNotifyWnd((HWND)wParam);
+	m_Updater.Create();
+	return NULL;
+}
+
 void CWorkWnd::OnEnable(WORD,HWND)
 {
 	CHook::GetHook()->Enable();
@@ -178,20 +184,6 @@ void CWorkWnd::OnDisable(WORD,HWND)
 void CWorkWnd::OnRestore(WORD,HWND)
 {
 	CHook::GetHook()->Restore();
-
-
-//	ASSERT(wnd.Create(*this));
-
-
-
-//	::SetLayeredWindowAttributes(wnd,0x00ffffff,150,LWA_COLORKEY
-		//|ULW_ALPHA
-//		);
-//		m_osdWnd.ShowText(_T("TopMost:On"),COSDWnd::osdpCenter);
-//			m_osdWnd.ShowText(_T("TopMost:Off"),COSDWnd::osdpCenter);
-
-//	m_osdWnd.ShowText(_T("any text"),COSDWnd::osdpCenter);
-	
 }
 
 void CWorkWnd::OnViewingWnds(WORD,HWND)
@@ -233,6 +225,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 
 	CPropSystem propSystem;
 	propSystem.m_fAutoRun=m_ProfileReg.IsAutoRun(CULStrTable(IDS_APP_NAME));
+	propSystem.m_UpdateType=(CPropSystem::enUpdateType)m_Updater.m_UpdateType;
 	m_propsheetOptions.AddPage(propSystem.Create(IDD_PROPPAGE_SYSTEM));	
 
 	m_propsheetOptions.m_psh.dwFlags=PSH_NOAPPLYNOW|PSH_NOCONTEXTHELP;
@@ -247,6 +240,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 		m_osdWnd.SetTextColor(propOSD.m_clrText);
 		m_osdWnd.SetTextShadowColor(propOSD.m_clrTextShadow);
 		m_osdWnd.SetFont(propOSD.m_LogFont);
+		m_Updater.m_UpdateType=(CUpdater::enUpdateType)propSystem.m_UpdateType;
 		SaveSettings();
 		if(propSystem.m_fAutoRun)
 		{

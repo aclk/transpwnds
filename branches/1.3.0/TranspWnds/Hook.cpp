@@ -278,7 +278,7 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 		return 0;
 	fStartMoveWnd=true;
 	ptStart=lpMouseHookStruct->pt;
-	return 0;
+	return 1;
 }
 
 LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
