@@ -140,12 +140,12 @@ BOOL CUpdater::CheckForUpdate(int arVer[constSectionSize])
 		::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unError,(LPARAM)0);
 		return FALSE;
 	}
-	BOOL fUpdate=TRUE;
+	BOOL fUpdate=FALSE;
 	for(int i=0;i<constSectionSize;++i)
 	{
-		if(m_arLastVer[i]<m_arCurrentVer[i])
+		if(m_arLastVer[i]>m_arCurrentVer[i])
 		{
-			fUpdate=FALSE;
+			fUpdate=TRUE;
 			break;
 		}
 	}
