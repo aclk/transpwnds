@@ -1,4 +1,5 @@
-#define _WIN32_WINNT 0x0500
+#define _WIN32_WINNT 0x0501
+#define _WIN32_IE 0x0501
 #include "Hook.h"
 #include "WorkWnd.h"
 #include "resource.h"
@@ -11,6 +12,7 @@
 
 #include "AboutDlg.h"
 
+
 CWorkWnd::CWorkWnd(void):
 	CULWnd()
 {
@@ -19,6 +21,7 @@ CWorkWnd::CWorkWnd(void):
 	MessageMap.AddMessage<CWorkWnd>(NIM_MESSAGE,&CWorkWnd::OnNIMessage);
 	MessageMap.AddMessage<CWorkWnd>(OSDM_MESSAGE,&CWorkWnd::OnOSDMessage);
 	MessageMap.AddMessage<CWorkWnd>(UDM_CHECKFORUPDATE,&CWorkWnd::OnCheckForUpdate);
+	MessageMap.AddMessage<CWorkWnd>(UDM_CHECKFORUPDATENOTIFY,&CWorkWnd::OnCheckForUpdateNotify);
 
 	MessageMap.AddMessage<CWorkWnd>(WM_TIMER,&CWorkWnd::OnTimer);
 
@@ -37,6 +40,25 @@ CWorkWnd::CWorkWnd(void):
 
 CWorkWnd::~CWorkWnd(void)
 {
+}
+
+void CWorkWnd::InitUpdateTimers()
+{
+	switch(m_Updater.m_UpdateType)
+	{
+	case CUpdater::utAtStart:
+		KillTimer(tCheckForUpdateAt24);
+		SetTimer(tCheckForUpdateStartProg,tvFotStart);
+		break;
+	case CUpdater::utEvery24:
+		KillTimer(tCheckForUpdateStartProg);
+		SetTimer(tCheckForUpdateAt24,tvFotAt24);
+		break;
+	case CUpdater::utAtStartEvery24:
+		SetTimer(tCheckForUpdateStartProg,tvFotStart);
+		SetTimer(tCheckForUpdateAt24,tvFotAt24);
+		break;
+	}
 }
 
 LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
@@ -59,55 +81,61 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_QUIT,CULStrTable(IDS_MENU_QUIT));
 
-	m_niData.cbSize=sizeof(m_niData);
-	m_niData.uFlags=NIF_ICON|NIF_MESSAGE|NIF_TIP;
-	m_niData.hWnd=*this;
-	m_niData.hIcon=(HICON)LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR);
-	if(m_niData.hIcon==NULL)
-		DestroyWindow();
-	_tcscpy_s(m_niData.szTip,64,CULStrTable(IDS_APP_NAME));
-	m_niData.uCallbackMessage=NIM_MESSAGE;
-	m_niData.uID=NIM_MESSAGE;
-	if(!Shell_NotifyIcon(NIM_ADD,&m_niData))
-		DestroyWindow();
+
+	m_TrayIcon.Create(*this,NIM_MESSAGE);
+	m_TrayIcon.AddIcon((HICON)LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR));
+	m_TrayIcon.SetIconTip(1,CULStrTable(IDS_APP_NAME));
 
 	m_ProfileReg.SetRegistryKey(CULStrTable(IDS_COMPANY_NAME),CULStrTable(IDS_APP_NAME));
 	LoadSettings();
 
 	CHook::GetHook()->Enable();
 
-	SetTimer(1,2000);
+	SetTimer(tCheckWnds,2000);
 
 	ASSERT(m_osdWnd.Create(*this));
+
+	InitUpdateTimers();
 
 	return 0;
 }
 
 
 
-LRESULT CWorkWnd::OnTimer(WPARAM,LPARAM)
+LRESULT CWorkWnd::OnTimer(WPARAM idTimer,LPARAM)
 {
-	for(std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=
-		CHook::GetHook()->m_mapWndInfo.begin();
-		iterItem!=CHook::GetHook()->m_mapWndInfo.end();iterItem++)
-		if(!::IsWindow(iterItem->first))
-		{
-			if(m_ViewingWndsDlg.IsWindow())
-				m_ViewingWndsDlg.DeleteItem(iterItem->first);
-			CHook::GetHook()->m_mapWndInfo.erase(iterItem->first);
-			break;
-		}
-		else
-			if(m_ViewingWndsDlg.IsWindow())
-				m_ViewingWndsDlg.InsertItem(iterItem->first);
+	switch(idTimer)
+	{
+	case tCheckWnds:
+		for(std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=
+			CHook::GetHook()->m_mapWndInfo.begin();
+			iterItem!=CHook::GetHook()->m_mapWndInfo.end();iterItem++)
+			if(!::IsWindow(iterItem->first))
+			{
+				if(m_ViewingWndsDlg.IsWindow())
+					m_ViewingWndsDlg.DeleteItem(iterItem->first);
+				CHook::GetHook()->m_mapWndInfo.erase(iterItem->first);
+				break;
+			}
+			else
+				if(m_ViewingWndsDlg.IsWindow())
+					m_ViewingWndsDlg.InsertItem(iterItem->first);
+		break;
+	case tCheckForUpdateStartProg:
+		KillTimer(tCheckForUpdateStartProg);
+		PostMessage(UDM_CHECKFORUPDATE,(WPARAM)m_hWnd,(LPARAM)UDM_CHECKFORUPDATENOTIFY);
+		break;
+	case tCheckForUpdateAt24:
+		PostMessage(UDM_CHECKFORUPDATE,(WPARAM)m_hWnd,(LPARAM)UDM_CHECKFORUPDATENOTIFY);
+		break;
+	}		
 	return 1;
 }
 
 
 LRESULT CWorkWnd::OnDestroy(WPARAM,LPARAM)
 {
-	KillTimer(1);
-	Shell_NotifyIcon(NIM_DELETE,&m_niData);
+	KillTimer(tCheckWnds);
 	::PostQuitMessage(0);
 	return 0;
 }
@@ -122,6 +150,8 @@ LRESULT CWorkWnd::OnNIMessage(WPARAM,LPARAM lParam)
 		m_Menu.TrackPopupMenu(TPM_RIGHTBUTTON,pt,*this);
 		PostMessage(WM_NULL);
 	}
+	if(lParam==NIN_BALLOONUSERCLICK)
+		::ShellExecute(NULL, _T("open"), CULStrTable(IDS_DOWNLOADPAGE), NULL, NULL, SW_SHOWNORMAL);
 	return 1;
 }
 
@@ -160,11 +190,25 @@ LRESULT CWorkWnd::OnOSDMessage(WPARAM wParam,LPARAM lParam)
 	return 1;
 }
 
-LRESULT CWorkWnd::OnCheckForUpdate(WPARAM wParam,LPARAM)
+LRESULT CWorkWnd::OnCheckForUpdate(WPARAM hWnd,LPARAM uMsg)
 {
-	m_Updater.SetNotifyWnd((HWND)wParam);
+	m_Updater.SetNotifyWnd((HWND)hWnd);
+	m_Updater.SetNotifyMsg((UINT)uMsg);
 	m_Updater.Create();
 	return NULL;
+}
+
+LRESULT CWorkWnd::OnCheckForUpdateNotify(WPARAM idEvent,LPARAM idEventParam)
+{
+	switch(idEvent)
+	{
+		case CUpdater::unNewVersionAvail:
+			if(idEventParam==TRUE)
+				m_TrayIcon.ShowBalloon(1,CULStrTable(IDS_DOWNLOAD_NOTIFY_CAPTION),
+					CULStrTable(IDS_DOWNLOAD_NOTIFY),NIIF_INFO);		
+			break;
+	}
+	return 1;
 }
 
 void CWorkWnd::OnEnable(WORD,HWND)
@@ -250,6 +294,7 @@ void CWorkWnd::OnOptions(WORD,HWND)
 		}
 		else
 			m_ProfileReg.AddToAutoRun(CULStrTable(IDS_APP_NAME),NULL);
+		InitUpdateTimers();
 	}
 }
 

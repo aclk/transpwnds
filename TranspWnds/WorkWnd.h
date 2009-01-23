@@ -13,12 +13,25 @@ public:
 	{
 		NIM_MESSAGE=WM_APP+1,
 		OSDM_MESSAGE,
-		UDM_CHECKFORUPDATE
+		UDM_CHECKFORUPDATE,
+		UDM_CHECKFORUPDATENOTIFY
 	};
 	COSDWnd m_osdWnd;
 protected:
+	enum enTimers
+	{
+		tCheckWnds=1,
+		tCheckForUpdateStartProg,
+		tCheckForUpdateAt24,
+	};
+	enum enTimerVals
+	{
+		tvFotStart=5*60*1000,
+		tvFotAt24=24*60*60*1000
+	};
+protected:
 	CULMenu m_Menu;
-	NOTIFYICONDATA m_niData;
+	CULTrayIcon m_TrayIcon;
 
 	CUpdater m_Updater;
 
@@ -29,6 +42,7 @@ protected:
 public:
 	CWorkWnd(void);
 	~CWorkWnd(void);
+	void InitUpdateTimers();
 	void LoadSettings();
 	void SaveSettings();
 protected:
@@ -38,6 +52,7 @@ protected:
 	LRESULT OnNIMessage(WPARAM,LPARAM);
 	LRESULT OnOSDMessage(WPARAM,LPARAM);
 	LRESULT OnCheckForUpdate(WPARAM,LPARAM);
+	LRESULT OnCheckForUpdateNotify(WPARAM,LPARAM);
 
 	void OnEnable(WORD,HWND);
 	void OnDisable(WORD,HWND);

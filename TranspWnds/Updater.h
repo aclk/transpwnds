@@ -6,10 +6,6 @@ class CUpdater:
 	public CULThread
 {
 public:
-	enum 
-	{
-		UDM_NOTIFY=WM_APP+1,
-	};
 	enum enUpdateNotify
 	{
 		unCurrentVersion,
@@ -31,6 +27,7 @@ public:
 	};
 	enUpdateType m_UpdateType;
 	HWND m_hwndNotify;
+	UINT m_uMsg;
 protected:
 	int m_arLastVer[constSectionSize];
 	int m_arCurrentVer[constSectionSize];
@@ -41,6 +38,7 @@ public:
 	BOOL GetCurrentVersion(int arVer[constSectionSize]);
 	BOOL CheckForUpdate(int arVer[constSectionSize]);
 	BOOL SetNotifyWnd(HWND hwndNotify);
+	BOOL SetNotifyMsg(UINT uMsg);
 protected:
 	BOOL Run();
 

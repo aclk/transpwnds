@@ -94,7 +94,8 @@ STYLE DS_SETFONT | DS_3DLOOK | DS_FIXEDSYS | WS_POPUP | WS_BORDER | WS_SYSMENU
 FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     DEFPUSHBUTTON   "OK",IDOK,75,97,50,16,BS_FLAT
-    LISTBOX         IDC_LIST_UPDATELOG,7,7,186,85,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LISTBOX         IDC_LIST_UPDATELOG,7,7,186,77,LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Please click here to open the download page",IDC_STATIC_DOWNLOADPAGE,27,87,150,8,SS_NOTIFY
 END
 
 
@@ -176,6 +177,9 @@ STRINGTABLE
 BEGIN
     IDS_CHECKFORUPDATE_ERROR "Check for update"
     IDS_CHECKFORUPDATE_DATANAME "Bytes"
+    IDS_DOWNLOADPAGE        "http://code.google.com/p/transpwnds/downloads/list"
+    IDS_DOWNLOAD_NOTIFY     "Please click here to open the download page"
+    IDS_DOWNLOAD_NOTIFY_CAPTION "New version available"
 END
 
 #endif    // Russian resources
@@ -363,7 +367,7 @@ BEGIN
             VALUE "LegalCopyright", "Copyright (C) 2009"
             VALUE "OriginalFilename", "TranspWnd"
             VALUE "ProductName", " TranspWnd"
-            VALUE "ProductVersion", "1.2.7"
+            VALUE "ProductVersion", "1.3.0"
         END
     END
     BLOCK "VarFileInfo"
