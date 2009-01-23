@@ -52,6 +52,9 @@
 #define IDS_CHECKFORUPDATE_NEWVERSIONAVAIL 127
 #define IDS_CHECKFORUPDATE_ERROR        128
 #define IDS_CHECKFORUPDATE_DATANAME     129
+#define IDS_DOWNLOADPAGE                130
+#define IDS_DOWNLOAD_NOTIFY             131
+#define IDS_DOWNLOAD_NOTIFY_CAPTION     132
 #define IDC_CHECK_TRANSP_ALT            1001
 #define IDC_CHECK_TRANSP_CTRL           1002
 #define IDC_CHECK_TRANSP_SHIFT          1003
@@ -99,6 +102,7 @@
 #define IDC_BUTTON_CHECKNOW             1028
 #define IDC_RADIO_NEVER                 1029
 #define IDC_LIST_UPDATELOG              1031
+#define IDC_STATIC_DOWNLOADPAGE         1032
 
 // Next default values for new objects
 // 
@@ -106,7 +110,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        106
 #define _APS_NEXT_COMMAND_VALUE         40001
-#define _APS_NEXT_CONTROL_VALUE         1032
+#define _APS_NEXT_CONTROL_VALUE         1033
 #define _APS_NEXT_SYMED_VALUE           109
 #endif
 #endif

@@ -1,10 +1,11 @@
 #include "Updater.h"
-
+#include "resource.h"
 #include <string>
 #include <sstream>
 
 CUpdater::CUpdater(void):
-	m_hwndNotify(NULL)
+	m_hwndNotify(NULL),
+	m_uMsg(0)
 {
 }
 
@@ -14,26 +15,28 @@ CUpdater::~CUpdater(void)
 
 BOOL CUpdater::GetLastVersion(int arVer[constSectionSize])
 {
-	::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unConnect,-1);
+	::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unConnect,-1);
 	ULInet::CULHttpFile file;
-	if(!file.Open(_T("http://code.google.com/p/transpwnds/downloads/list")))
+	if(!file.Open(CULStrTable(IDS_DOWNLOADPAGE)))
 	{
-		::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unConnect,FALSE);
+		::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unConnect,FALSE);
 		return FALSE;
 	}
 	char  szData[101];
 	DWORD dwBytesRead;
+	DWORD dwBytesCounter=0;
 	bool fEnd=false;
 	std::string strContent;
-	::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unConnect,TRUE);
-	::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unRecieveData,0);
+	::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unConnect,TRUE);
+	::SendMessage(m_hwndNotify,m_uMsg,(WPARAM)unRecieveData,0);
 	while(file.ReadFile(szData,sizeof(szData)-1,&dwBytesRead)&&!fEnd)
 	{
 		if(dwBytesRead==0)
 			break;
 		szData[dwBytesRead]=0;
 		strContent+=szData;
-		::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unRecieveData,(LPARAM)strContent.size());
+		dwBytesCounter+=dwBytesRead;
+		::SendMessage(m_hwndNotify,m_uMsg,(WPARAM)unRecieveData,(LPARAM)dwBytesCounter);
 		std::string::size_type nPos=strContent.find("version");
 		if(nPos!=std::string::npos)
 		{
@@ -60,15 +63,15 @@ BOOL CUpdater::GetLastVersion(int arVer[constSectionSize])
 						}
 						else
 						{
-							::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unParseData,(LPARAM)FALSE);
+							::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)FALSE);
 							fEndParseVersion=false;
 							break;
 						}
 					}
 					if(fEndParseVersion)
 					{
-						::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unParseData,(LPARAM)TRUE);
-						::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unLastVersion,(LPARAM)m_arLastVer);
+						::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)TRUE);
+						::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unLastVersion,(LPARAM)m_arLastVer);
 						fEnd=true;
 					}
 				}
@@ -120,7 +123,7 @@ BOOL CUpdater::GetCurrentVersion(int arVer[constSectionSize])
 		for(int i=0;i<constSectionSize;++i)
 			arVer[i]=m_arCurrentVer[i];
 
-	::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unCurrentVersion,(LPARAM)m_arCurrentVer);
+	::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unCurrentVersion,(LPARAM)m_arCurrentVer);
 	
 	return TRUE;
 }
@@ -129,12 +132,12 @@ BOOL CUpdater::CheckForUpdate(int arVer[constSectionSize])
 {
 	if(!GetCurrentVersion(NULL))
 	{
-		::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unError,(LPARAM)0);
+		::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unError,(LPARAM)0);
 		return FALSE;
 	}
 	if(!GetLastVersion(NULL))
 	{
-		::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unError,(LPARAM)0);
+		::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unError,(LPARAM)0);
 		return FALSE;
 	}
 	BOOL fUpdate=TRUE;
@@ -149,7 +152,7 @@ BOOL CUpdater::CheckForUpdate(int arVer[constSectionSize])
 	if(arVer)
 		for(int i=0;i<constSectionSize;++i)
 			arVer[i]=m_arLastVer[i];
-	::PostMessage(m_hwndNotify,UDM_NOTIFY,(WPARAM)unNewVersionAvail,(LPARAM)fUpdate);
+	::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unNewVersionAvail,(LPARAM)fUpdate);
 	return fUpdate;
 }
 
@@ -160,6 +163,15 @@ BOOL CUpdater::SetNotifyWnd(HWND hwndNotify)
 	m_hwndNotify=hwndNotify;
 	return TRUE;
 }
+
+BOOL CUpdater::SetNotifyMsg(UINT uMsg)
+{
+	if(uMsg<WM_USER)
+		return FALSE;
+	m_uMsg=uMsg;
+	return TRUE;
+}
+
 
 BOOL CUpdater::Run()
 {

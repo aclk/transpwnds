@@ -3,7 +3,7 @@
 #include "UpdateProgressDlg.h"
 
 CPropSystem::CPropSystem(void):
-	CULPropPage()
+	CULPropPage()	
 {
 	MessageMap.AddCommand<CPropSystem>(IDC_BUTTON_CHECKNOW,&CPropSystem::OnBtnCheckNow);
 }

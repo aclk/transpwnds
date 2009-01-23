@@ -7,7 +7,7 @@
 CUpdateProgressDlg::CUpdateProgressDlg(void):
 	CULDlg()
 {
-	MessageMap.AddMessage<CUpdateProgressDlg>(CUpdater::UDM_NOTIFY,&CUpdateProgressDlg::OnUpdateNotify);
+	MessageMap.AddMessage<CUpdateProgressDlg>(UDM_NOTIFY,&CUpdateProgressDlg::OnUpdateNotify);
 	MessageMap.AddMessage<CUpdateProgressDlg>(WM_SHOWWINDOW,&CUpdateProgressDlg::OnShowWindow);
 }
 
@@ -17,6 +17,28 @@ CUpdateProgressDlg::~CUpdateProgressDlg(void)
 LRESULT CUpdateProgressDlg::OnInitDialog(WPARAM w,LPARAM l)
 {
 	m_listUpdateLog.Attach(GetDlgItem(IDC_LIST_UPDATELOG));
+/*
+	m_hyperlinkDownloadPage.Attach(GetDlgItem(IDC_STATIC_DOWNLOADPAGE),
+		CULStrTable(IDS_DOWNLOADPAGE));
+	*/	
+	{
+		::ShowWindow(GetDlgItem(IDC_STATIC_DOWNLOADPAGE),SW_HIDE);
+	}
+
+	m_hyperlinkDownloadPage.CreateHyperLink(*this,40,140,CULStrTable(IDS_DOWNLOAD_NOTIFY),
+		CULStrTable(IDS_DOWNLOADPAGE),0);
+
+	m_hyperlinkDownloadPage.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tDefault,
+		ULWnds::ULControls::ULButtons::CULHyperLink::sNone,RGB(0,0,255));
+	m_hyperlinkDownloadPage.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tHiLite,
+		ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine,RGB(0,0,255));
+	m_hyperlinkDownloadPage.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tDown,
+		ULWnds::ULControls::ULButtons::CULHyperLink::enStyles
+		((int)ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine),RGB(64,0,255));
+	m_hyperlinkDownloadPage.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tVisited,
+		ULWnds::ULControls::ULButtons::CULHyperLink::enStyles
+		((int)ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine),RGB(128,0,255));
+
 
 	return CULDlg::OnInitDialog(w,l);
 }
@@ -24,7 +46,8 @@ LRESULT CUpdateProgressDlg::OnInitDialog(WPARAM w,LPARAM l)
 LRESULT CUpdateProgressDlg::OnShowWindow(WPARAM wParam,LPARAM)
 {
 	if(wParam)
-		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::UDM_CHECKFORUPDATE,(WPARAM)m_hWnd,0);
+		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::UDM_CHECKFORUPDATE,
+		(WPARAM)m_hWnd,(LPARAM)UDM_NOTIFY);
 
 	return 0;
 }
@@ -36,7 +59,7 @@ LRESULT CUpdateProgressDlg::OnUpdateNotify(WPARAM wParam,LPARAM lParam)
 	{
 	case CUpdater::unCurrentVersion:
 		{
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_CURRENTVERSION)<<" ";
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_CURRENTVERSION)<<" ";
 			int* pVer=(int*)lParam;
 			for(int i=0;i<CUpdater::constSectionSize;++i)
 			{
@@ -50,16 +73,16 @@ LRESULT CUpdateProgressDlg::OnUpdateNotify(WPARAM wParam,LPARAM lParam)
 	case CUpdater::unConnect:
 		if(lParam==-1)
 		{
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_CONNECT)<<"......";
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_CONNECT)<<"......";
 			m_listUpdateLog.AddString(ss.str().c_str());
 		}
 		else
 		{
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_CONNECT)<<"......";
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_CONNECT)<<"......";
 			if(lParam==TRUE)
-				ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
+				ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
 			if(lParam==FALSE)
-				ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
+				ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
 			if(m_listUpdateLog.GetCount()>CUpdater::unConnect)
 				m_listUpdateLog.DeleteString(m_listUpdateLog.GetCount()-1);
 			m_listUpdateLog.AddString(ss.str().c_str());
@@ -70,24 +93,24 @@ LRESULT CUpdateProgressDlg::OnUpdateNotify(WPARAM wParam,LPARAM lParam)
 			m_listUpdateLog.AddString(CULStrTable(CULStrTable(IDS_CHECKFORUPDATE_RECEIVEDATA)));
 		else
 		{
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_RECEIVEDATA)<<"......"<<(int)lParam;
-			ss<<" "<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_DATANAME);
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_RECEIVEDATA)<<"......"<<(int)lParam;
+			ss<<" "<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_DATANAME);
 			if(m_listUpdateLog.GetCount()>CUpdater::unRecieveData)
 				m_listUpdateLog.DeleteString(m_listUpdateLog.GetCount()-1);
 			m_listUpdateLog.AddString(ss.str().c_str());
 		}
 		break;
 	case CUpdater::unParseData:
-		ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_PARSEDATA)<<"......";
+		ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_PARSEDATA)<<"......";
 		if(lParam==TRUE)
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
 		if(lParam==FALSE)
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
 		m_listUpdateLog.AddString(ss.str().c_str());
 		break;
 	case CUpdater::unLastVersion:
 		{
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_LASTVERSION)<<"...... ";
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_LASTVERSION)<<"...... ";
 			int* pVer=(int*)lParam;
 			for(int i=0;i<CUpdater::constSectionSize;++i)
 			{
@@ -99,16 +122,16 @@ LRESULT CUpdateProgressDlg::OnUpdateNotify(WPARAM wParam,LPARAM lParam)
 		}
 		break;
 	case CUpdater::unNewVersionAvail:
-		ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_NEWVERSIONAVAIL)<<"......";
+		ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_NEWVERSIONAVAIL)<<"......";
 		if(lParam==TRUE)
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_OK);
 		if(lParam==FALSE)
-			ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
+			ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
 		m_listUpdateLog.AddString(ss.str().c_str());
 		break;
 	case CUpdater::unError:
-		ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_ERROR)<<"......";
-		ss<<(LPTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
+		ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_ERROR)<<"......";
+		ss<<(LPCTSTR)CULStrTable(IDS_CHECKFORUPDATE_FAIL);
 		m_listUpdateLog.AddString(ss.str().c_str());
 		break;
 	}
