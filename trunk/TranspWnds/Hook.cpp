@@ -1,7 +1,6 @@
 #define _WIN32_WINNT 0x0500
 #include "Hook.h"
-
-#include "ULLibNS.h"
+#include "WorkWnd.h"
 
 
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam);
@@ -97,9 +96,9 @@ CHook* CHook::GetHook()
 ///\return хендл popup в случае успеха, если popup оказывается рабочий стол то вернет NULL
 HWND GetPopup(HWND hWnd)
 {
-//	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
-//		hWnd=GetParent(hWnd);
-	hWnd=GetAncestor(hWnd,GA_ROOT);
+	while(((GetWindowLong(hWnd,GWL_STYLE)&WS_CHILD))&&IsWindow(hWnd))
+		hWnd=GetParent(hWnd);
+	//hWnd=GetAncestor(hWnd,GA_ROOT);
 	if(!hWnd)
 		return NULL;		
 	static TCHAR szText[255];
@@ -146,20 +145,36 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	{
 		if(((short)HIWORD(lpMouseHookStruct->mouseData))>0)
 			return 0;
+
+		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
+		if(iterItem!=m_mapWndInfo.end())
+		{
+			iterItem._Mynode()->_Myval.second.bAlpha=255;
+			iterItem._Mynode()->_Myval.second.fAlpha=TRUE;
+		}
+		else
+		{
+			CHook::WNDINFO wi={0};
+			wi.bAlpha=255;
+			wi.fAlpha=TRUE;
+			m_mapWndInfo[hWnd]=wi;
+		}
 		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)|WS_EX_LAYERED);
-		CHook::WNDINFO wi={0};
-		wi.bAlpha=255;
-		wi.fAlpha=TRUE;
-		m_mapWndInfo[hWnd]=wi;
+		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+			(WPARAM)hWnd,(LPARAM)hkoTransp);
 		SetLayeredWindowAttributes(hWnd,0,255,LWA_ALPHA);
-		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE|RDW_INVALIDATE|RDW_FRAME|RDW_ALLCHILDREN);
 		return 1;
 	}
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first!=hWnd)||(!iterItem._Mynode()->_Myval.second.fAlpha))
+		if((iterItem==m_mapWndInfo.end())||(!iterItem._Mynode()->_Myval.second.fAlpha))
+		{
+			CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+				(WPARAM)hWnd,(LPARAM)hkoTransp);
 			return 0;                               
+		}
 	}
 	BYTE bAlpha=m_mapWndInfo[hWnd].bAlpha;
 	if(((short)HIWORD(lpMouseHookStruct->mouseData))<0)
@@ -171,9 +186,19 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	{
 		if(bAlpha<=(255-m_bTranspStep))
 			bAlpha+=m_bTranspStep;
-	}                       
+		else
+			bAlpha=255;
+	}                     
+	CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+		(WPARAM)hWnd,(LPARAM)hkoTransp);
 	SetLayeredWindowAttributes(hWnd,0,bAlpha,LWA_ALPHA);            
 	m_mapWndInfo[hWnd].bAlpha=bAlpha;
+/*	if(m_mapWndInfo[hWnd].bAlpha==255)
+	{
+		::SetWindowLong(hWnd,GWL_EXSTYLE,GetWindowLong(hWnd,GWL_EXSTYLE)&~WS_EX_LAYERED);
+		m_mapWndInfo[hWnd].fAlpha=FALSE;
+	}
+	*/
 	return 1;
 }
 
@@ -189,7 +214,7 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 	if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_TOPMOST)==0)
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 			iterItem._Mynode()->_Myval.second.fTopMost=TRUE;
 		else
 		{
@@ -198,15 +223,19 @@ LRESULT CHook::ProcessTopMost(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 			m_mapWndInfo[hWnd]=wi;
 		}
 		::SetWindowPos(hWnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+			(WPARAM)hWnd,(LPARAM)hkoTopMost);
 		return 1;						
 	}
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 		{
 			iterItem._Mynode()->_Myval.second.fTopMost=FALSE;
 			::SetWindowPos(hWnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
+			CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+				(WPARAM)hWnd,(LPARAM)hkoTopMost);
 		}
 	}
 	return 1;
@@ -233,7 +262,7 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartMoveWnd=false;
 	
-	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg)&&fStartMoveWnd)
 	{
 		fStartMoveWnd=false;
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
@@ -273,7 +302,7 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	else
 		fStartSizeWnd=false;
 	
-	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg))
+	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg)&&fStartSizeWnd)
 	{
 		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 		fStartSizeWnd=false;
@@ -304,7 +333,7 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 	if((GetWindowLong(hWnd,GWL_STYLE)&WS_CAPTION)==WS_CAPTION)
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 			iterItem._Mynode()->_Myval.second.dwStyle=(DWORD)::GetWindowLong(hWnd,GWL_STYLE);
 		else
 		{
@@ -315,18 +344,22 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 		::SetWindowLong(hWnd,GWL_STYLE,
 			::GetWindowLong(hWnd,GWL_STYLE)&~WS_CAPTION);
 		::SetWindowPos(hWnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
+		CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+			(WPARAM)hWnd,(LPARAM)hkoToggleCaption);
 
 		return 1;						
 	}
 	else
 	{
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
-		if((iterItem._Mynode()->_Myval.first==hWnd))
+		if(iterItem!=m_mapWndInfo.end())
 		{
 			::SetWindowLong(hWnd,GWL_STYLE,
 				::GetWindowLong(hWnd,GWL_STYLE)|iterItem._Mynode()->_Myval.second.dwStyle);
 			::SetWindowPos(hWnd,0,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE|SWP_NOZORDER|SWP_FRAMECHANGED);
 			iterItem._Mynode()->_Myval.second.dwStyle=0;
+			CULApp::GetULApp()->m_pMainWnd->PostMessage(CWorkWnd::OSDM_MESSAGE,
+				(WPARAM)hWnd,(LPARAM)hkoToggleCaption);
 		}
 	}
 	RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);

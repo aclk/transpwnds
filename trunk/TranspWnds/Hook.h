@@ -3,6 +3,7 @@
 #include <windows.h>
 #include <map>
 
+
 typedef struct tagHotKeyInfo
 {
 	bool IsHotKey(PMSLLHOOKSTRUCT lpMouseHookStruct);
@@ -29,6 +30,7 @@ class CHook
 {
 public:
 	HHOOK m_hMouse;
+public:
 	///\brief структура, содержащая информацию об окне
 	///\param bAlpha - альфаканал
 	///\param fAlpha - TRUE,если окну был присвоен стиль WS_EX_LAYERED 
@@ -43,6 +45,8 @@ public:
 	}WNDINFO,*LPWNDINFO;
 	///\brief мап окно - информация о нём
 	std::map<HWND,WNDINFO> m_mapWndInfo;
+
+
 
 
 	HOTKEYINFO m_arHotKeyInfo[hkoCount];
