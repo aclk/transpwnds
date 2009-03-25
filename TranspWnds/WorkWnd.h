@@ -22,7 +22,7 @@ protected:
 	{
 		tCheckWnds=1,
 		tCheckForUpdateStartProg,
-		tCheckForUpdateAt24,
+		tCheckForUpdateAt24,		
 	};
 	enum enTimerVals
 	{
@@ -31,6 +31,8 @@ protected:
 	};
 protected:
 	CULMenu m_Menu;
+	HICON m_hTrayIcon;
+	UINT m_idTrayIcon;
 	CULTrayIcon m_TrayIcon;
 
 	CUpdater m_Updater;
@@ -53,6 +55,7 @@ protected:
 	LRESULT OnOSDMessage(WPARAM,LPARAM);
 	LRESULT OnCheckForUpdate(WPARAM,LPARAM);
 	LRESULT OnCheckForUpdateNotify(WPARAM,LPARAM);
+	LRESULT OnTaskBarCreated(WPARAM,LPARAM);
 
 	void OnEnable(WORD,HWND);
 	void OnDisable(WORD,HWND);
