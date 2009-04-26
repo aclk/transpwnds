@@ -82,9 +82,14 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 	m_Menu.AppendMenu(MF_BYCOMMAND,IDM_QUIT,CULStrTable(IDS_MENU_QUIT));
 
 
-	m_TrayIcon.Create(*this,NIM_MESSAGE);
-	m_TrayIcon.AddIcon((HICON)LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR));
-	m_TrayIcon.SetIconTip(1,CULStrTable(IDS_APP_NAME));
+	//грузим трэй иконку
+	m_hTrayIcon=(HICON)LoadImage(ULGetResourceHandle(),MAKEINTRESOURCE(IDI_MAINICON),IMAGE_ICON,0,0,LR_DEFAULTSIZE|LR_DEFAULTCOLOR);
+	//подписываемся на сообщение создание панели задач
+	UINT WM_TASKBARCREATED = RegisterWindowMessage(_T("TaskbarCreated"));
+	MessageMap.AddMessage<CWorkWnd>(WM_TASKBARCREATED,&CWorkWnd::OnTaskBarCreated);
+	//создаём иконку
+	PostMessage(WM_TASKBARCREATED);
+	
 
 	m_ProfileReg.SetRegistryKey(CULStrTable(IDS_COMPANY_NAME),CULStrTable(IDS_APP_NAME));
 	LoadSettings();
@@ -99,8 +104,6 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 
 	return 0;
 }
-
-
 
 LRESULT CWorkWnd::OnTimer(WPARAM idTimer,LPARAM)
 {
@@ -211,6 +214,14 @@ LRESULT CWorkWnd::OnCheckForUpdateNotify(WPARAM idEvent,LPARAM idEventParam)
 	return 1;
 }
 
+LRESULT CWorkWnd::OnTaskBarCreated(WPARAM,LPARAM)
+{
+	m_TrayIcon.Create(*this,NIM_MESSAGE);
+	m_idTrayIcon=m_TrayIcon.AddIcon(m_hTrayIcon);
+	m_TrayIcon.SetIconTip(m_idTrayIcon,CULStrTable(IDS_APP_NAME));
+	return 1;
+}
+
 void CWorkWnd::OnEnable(WORD,HWND)
 {
 	CHook::GetHook()->Enable();
@@ -309,3 +320,4 @@ void CWorkWnd::OnQuit(WORD,HWND)
 	CHook::GetHook()->Restore();
 	DestroyWindow();
 }
+
