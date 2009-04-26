@@ -58,6 +58,7 @@ namespace ULWnds
 	{
 		namespace ULListCtrlEx
 		{
+#pragma message(__FILE__":избавиться от IOM_GETITEMDATA")
 			const int IOM_GETITEMDATA=WM_APP+1;
 			//=====================================================================
 			///\class CItemCheckBox
@@ -330,33 +331,7 @@ void CViewingWndsDlg::InsertItem(HWND hwndItem)
 		ULListCtrlEx::CItemCheckBox* pItemCheckBox=(ULListCtrlEx::CItemCheckBox*)
 			m_listctrlViewingWnds.GetItemObject(nFindItem,1);
 		pItemCheckBox->SetCheck(i->second.fAlpha);
-/*
-		ULListCtrlEx::CItemComboBox* pItemComboBox=(ULListCtrlEx::CItemComboBox*)
-			m_listctrlViewingWnds.GetItemObject(nFindItem,2);
-		pItemComboBox->m_ComboBox.ResetContent();
-		{
-			for(int ii=(100-int(100*double(CHook::GetHook()->m_bMinTranspVal)/255));
-				ii>=10;ii-=int(100*double(CHook::GetHook()->m_bTranspStep)/255))
-			{
-				std::basic_stringstream<TCHAR>ss;
-				ss<<ii;
-				TCHAR szValAlpha[10];
-				ss>>szValAlpha;
-				int nItem=pItemComboBox->m_ComboBox.AddString(szValAlpha);
-				pItemComboBox->m_ComboBox.SetItemData(nItem,(DWORD)ii);					
-			}
-			int nItemLast=pItemComboBox->m_ComboBox.AddString(_T("0"));
-			if(i->second.fAlpha)
-			{
-				if(i->second.bAlpha==255)
-					pItemComboBox->m_ComboBox.SetCurSel(nItemLast);
-				else
-					pItemComboBox->m_ComboBox.SetCurSel(
-						i->second.bAlpha/CHook::GetHook()->m_bTranspStep);
-			}
-			pItemComboBox->m_ComboBox.EnableWindow(i->second.fAlpha);
-		}
-*/
+
 		pItemCheckBox=(ULListCtrlEx::CItemCheckBox*)
 			m_listctrlViewingWnds.GetItemObject(nFindItem,3);
 		pItemCheckBox->SetCheck(i->second.fTopMost);
