@@ -1,4 +1,3 @@
-#define _WIN32_WINNT 0x0400
 #include "PropHotKeys.h"
 #include "resource.h"
 CPropHotKeys::CPropHotKeys(void):
