@@ -370,6 +370,15 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 	RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
 	return 1;
 }
+
+
+
+
+
+
+//////!!!!!!!!!!!!!!это пробное для сквозного клика!!!!
+
+
 ///\class CEnumWindows
 ///\brief класс для поиска окна под окном, который под курсором мыши
 ///\note идея заключается в пеереборе окон и проверки всех последующих \n
