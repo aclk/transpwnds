@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <assert.h>
-#include "resource.h"
+#include "../Include/resource.h"
 #include <map>
 
 LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);
@@ -208,15 +208,15 @@ bool IsAutoRun()
 	return fFind;
 }
 ///\brief перечисление оконных собщений
-enum 
-{
-	IDM_ENABLE=1001,
-	IDM_DISABLE,
-	IDM_RESTORRE,
-	IDM_AUTORUN,
-	IDM_QUIT,	
-	NIM_MESSAGE=WM_APP+1,
-};
+//enum 
+//{
+//	IDM_ENABLE=1001,
+//	IDM_DISABLE,
+//	IDM_RESTORRE,
+//	IDM_AUTORUN,
+//	IDM_QUIT,	
+//	NIM_MESSAGE=WM_APP+1
+//};
 ///\brief оконная функция
 /*
 LRESULT CALLBACK WindowProc(HWND hWnd,UINT uMsg,WPARAM wParam,LPARAM lParam)

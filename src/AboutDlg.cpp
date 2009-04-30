@@ -1,5 +1,5 @@
-#include "AboutDlg.h"
-#include "resource.h"
+#include "../Include/AboutDlg.h"
+#include "../Include/resource.h"
 CAboutDlg::CAboutDlg(void):
 	CULDlg()
 {

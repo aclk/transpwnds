@@ -1,7 +1,7 @@
-#include "UpdateProgressDlg.h"
-#include "Updater.h"
-#include "resource.h"
-#include "WorkWnd.h"
+#include "../Include/UpdateProgressDlg.h"
+#include "../Include/Updater.h"
+#include "../Include/resource.h"
+#include "../Include/WorkWnd.h"
 #include <sstream>
 
 CUpdateProgressDlg::CUpdateProgressDlg(void):

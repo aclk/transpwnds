@@ -1,5 +1,5 @@
-#include "Updater.h"
-#include "resource.h"
+#include "../Include/Updater.h"
+#include "../Include/resource.h"
 #include <string>
 #include <sstream>
 

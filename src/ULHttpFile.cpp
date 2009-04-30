@@ -1,5 +1,5 @@
-#include "ULHttpFile.h"
-#include "ULStates.h"
+#include "../Include/ULHttpFile.h"
+#include <ULStates.h>
 
 #pragma comment(lib,"Wininet.lib")
 

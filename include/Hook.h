@@ -23,6 +23,7 @@ enum enHotKeyOperations
 	hkoMoveWnd,
 	hkoSizeWnd,
 	hkoToggleCaption,
+	hkoThroughClick,
 	hkoCount
 };
 
@@ -68,4 +69,5 @@ public:
 	LRESULT ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
+	LRESULT ProcessThroughClick(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 };

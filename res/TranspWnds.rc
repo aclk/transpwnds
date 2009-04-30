@@ -1,6 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+#include "../Include/resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,7 @@ LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
 // RT_MANIFEST
 //
 
-IDR_RT_MANIFEST1        RT_MANIFEST             "manifest.xml"
+IDR_RT_MANIFEST1        RT_MANIFEST             "../res/TranspWnds.manifest"
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////

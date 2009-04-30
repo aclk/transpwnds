@@ -1,5 +1,5 @@
-#include "PropOSD.h"
-#include "resource.h"
+#include "../Include/PropOSD.h"
+#include "../Include/resource.h"
 
 CPropOSD::CPropOSD(void):
 	CULPropPage(),

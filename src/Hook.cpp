@@ -1,6 +1,6 @@
 #define _WIN32_WINNT 0x0500
-#include "Hook.h"
-#include "WorkWnd.h"
+#include "../Include/Hook.h"
+#include "../Include/WorkWnd.h"
 
 
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam);
@@ -42,7 +42,9 @@ tagHotKeyInfo& tagHotKeyInfo::operator=(tagHotKeyInfo& HotKeyInfo)
 CHook::CHook(void):
 	m_hMouse(NULL)
 {
-
+	m_arHotKeyInfo[hkoThroughClick].m_fAlt=TRUE;
+	m_arHotKeyInfo[hkoThroughClick].m_fCtrl=TRUE;
+	m_arHotKeyInfo[hkoThroughClick].m_fShift=TRUE;
 }
 
 CHook::~CHook(void)
@@ -127,7 +129,10 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	lRes=theHook.ProcessToggleCaption((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
 	if(lRes)
 		return lRes;
-	
+	lRes=theHook.ProcessThroughClick((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
+	if(lRes)
+		return lRes;
+
 	return CallNextHookEx(theHook.m_hMouse,nCode,wParam,lParam);
 }
 LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
@@ -366,3 +371,116 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 	return 1;
 }
 
+
+
+
+
+
+//////!!!!!!!!!!!!!!это пробное для сквозного клика!!!!
+
+
+///\class CEnumWindows
+///\brief класс для поиска окна под окном, который под курсором мыши
+///\note идея заключается в пеереборе окон и проверки всех последующих \n
+/// в попадание под курсор.\n
+/// При попадании под курсор производится поиск дочернего окна
+struct CEnumWindows
+{
+	HWND m_hwndParent;
+	HWND m_hwndNext;
+	POINT m_ptClick;
+	bool m_fFindParent;
+	CEnumWindows():m_hwndParent(NULL),m_hwndNext(NULL),m_fFindParent(false)
+	{}
+	static BOOL CALLBACK EnumWindowsProc(HWND hWnd,LPARAM lParam)
+	{
+		CEnumWindows* pEnumWindows=(CEnumWindows*)lParam;
+		if(!pEnumWindows->m_fFindParent)
+		{
+			if(hWnd==pEnumWindows->m_hwndParent)
+				pEnumWindows->m_fFindParent=true;
+		}
+		else
+		{
+			RECT rc;
+			GetWindowRect(hWnd,&rc);
+			if(::PtInRect(&rc,pEnumWindows->m_ptClick))
+			{
+				pEnumWindows->m_hwndNext=hWnd;
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+	HWND GetNext(HWND hWnd,POINT pt)
+	{
+		m_hwndParent=hWnd;
+		m_ptClick=pt;
+		m_hwndNext=NULL;
+		m_fFindParent=false;
+		EnumWindows((WNDENUMPROC)EnumWindowsProc,(LPARAM)this);
+		return m_hwndNext;
+	}
+	HWND GetChild(HWND hWnd,POINT pt)
+	{
+		if(!m_hwndNext)
+			if(!GetNext(hWnd,pt))
+				return FALSE;
+		HWND hwndChild=m_hwndNext;
+		for(;;)
+		{
+/*		
+			FLASHWINFO fi={0};
+			fi.cbSize=sizeof(fi);
+			fi.hwnd=hwndChild;
+			fi.uCount=4;
+			FlashWindowEx(&fi);
+			*/
+			HWND hwndTmp=ChildWindowFromPoint(hwndChild,pt);
+			if(hwndTmp&&(hwndTmp!=hwndChild))
+				hwndChild=hwndTmp;
+			else
+				break;
+		}
+		return hwndChild;
+	}
+};
+CEnumWindows g_EnumWindows;
+
+LRESULT CHook::ProcessThroughClick(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
+{
+	if(!m_arHotKeyInfo[hkoThroughClick].IsHotKey(lpMouseHookStruct))
+		return 0;
+	if(!((uMsg==WM_LBUTTONUP)||(uMsg==WM_LBUTTONDOWN)))
+		return 0;
+
+	HWND hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
+	if((hWnd=GetPopup(hWnd))==0)
+		return 0;
+
+	HWND hwndNext=g_EnumWindows.GetNext(hWnd,lpMouseHookStruct->pt);
+	HWND hwndChild=g_EnumWindows.GetChild(hWnd,lpMouseHookStruct->pt);
+	if(!hWnd)
+		return 0;
+//	::SetForegroundWindow(hWnd);
+//	::SwitchToThisWindow(hwndNext,TRUE);
+	::SetForegroundWindow(hwndNext);
+//	::SetActiveWindow(hwndNext);
+//	::SetFocus(hwndNext);
+//	::BringWindowToTop(hwndNext);
+//	::SetWindowPos(hwndNext,hWnd,0,0,0,0,SWP_NOSIZE|SWP_NOMOVE);
+//	::SetForegroundWindow(hwndNext);
+//	ShowWindow(hWnd,SW_HIDE);
+	if(uMsg==WM_LBUTTONDOWN&&0)
+	{
+		::SendMessage(hwndChild,WM_LBUTTONDOWN,0,MAKELPARAM(lpMouseHookStruct->pt.x,
+			lpMouseHookStruct->pt.y));
+		::SendMessage(hwndChild,WM_LBUTTONUP,0,MAKELPARAM(lpMouseHookStruct->pt.x,
+			lpMouseHookStruct->pt.y));
+	}
+//::SetForegroundWindow(hWnd);
+//		::SetActiveWindow(hwndNext);
+//	::SetFocus(hwndNext);
+	return 1;
+}

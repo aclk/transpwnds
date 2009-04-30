@@ -1,6 +1,5 @@
-#define _WIN32_WINNT 0x0400
-#include "PropHotKeys.h"
-#include "resource.h"
+#include "../Include/PropHotKeys.h"
+#include "../Include/resource.h"
 CPropHotKeys::CPropHotKeys(void):
 	CULPropPage()
 {

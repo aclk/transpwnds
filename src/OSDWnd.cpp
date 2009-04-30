@@ -1,5 +1,5 @@
 #define _WIN32_WINNT  0x0500
-#include "OSDWnd.h"
+#include "../Include/OSDWnd.h"
 
 COSDWnd::COSDWnd(void):
 	CULWnd(),

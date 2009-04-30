@@ -1,7 +1,7 @@
 #define _WIN32_WINNT 0x0500
-#include "App.h"
-#include "ULLibLink.h"
-#include "WorkWnd.h"
+#include "../Include/App.h"
+#include <ULLibLink.h>
+#include "../Include/WorkWnd.h"
 CApp::CApp(void)
 {
 }

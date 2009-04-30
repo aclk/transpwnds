@@ -1,6 +1,6 @@
-#include "PropSystem.h"
-#include "resource.h"
-#include "UpdateProgressDlg.h"
+#include "../Include/PropSystem.h"
+#include "../Include/resource.h"
+#include "../Include/UpdateProgressDlg.h"
 
 CPropSystem::CPropSystem(void):
 	CULPropPage()	

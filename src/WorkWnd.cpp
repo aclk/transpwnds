@@ -1,16 +1,16 @@
 #define _WIN32_WINNT 0x0501
 #define _WIN32_IE 0x0501
-#include "Hook.h"
-#include "WorkWnd.h"
-#include "resource.h"
-#include "PropHotKeys.h"
-#include "PropSystem.h"
-#include "PropTransparent.h"
-#include "PropOSD.h"
+#include "../Include/Hook.h"
+#include "../Include/WorkWnd.h"
+#include "../Include/resource.h"
+#include "../Include/PropHotKeys.h"
+#include "../Include/PropSystem.h"
+#include "../Include/PropTransparent.h"
+#include "../Include/PropOSD.h"
 
 #include<sstream>
 
-#include "AboutDlg.h"
+#include "../Include/AboutDlg.h"
 
 
 CWorkWnd::CWorkWnd(void):

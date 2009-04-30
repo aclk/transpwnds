@@ -1,4 +1,4 @@
-#include "MouseHook.h"
+#include "../Include/MouseHook.h"
 
 CMouseHook::CMouseHook(void)
 {

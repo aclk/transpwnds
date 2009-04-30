@@ -1,6 +1,6 @@
 #define _WIN32_WINNT 0x0500
-#include "WorkWnd.h"
-#include "Hook.h"
+#include "../Include/WorkWnd.h"
+#include "../Include/Hook.h"
 
 void CWorkWnd::LoadSettings()
 {	
