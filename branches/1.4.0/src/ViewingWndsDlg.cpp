@@ -285,8 +285,8 @@ void CViewingWndsDlg::InsertItem(HWND hwndItem)
 			ULListCtrlEx::CItemComboBox* pItemComboBox=new ULListCtrlEx::CItemComboBox;
 			pItemComboBox->Create(m_listctrlViewingWnds,ciTransparentLevel,TRUE);
 
-			for(int ii=(100-int(100*double(CHook::GetHook()->m_bMinTranspVal)/255));
-				ii>=10;ii-=int(100*double(CHook::GetHook()->m_bTranspStep)/255))
+			for(int ii=(100-int(100*double(CHook::GetHook()->m_bMinTranspVal)/255 + 0.5));
+				ii>=10;ii-=int(100*double(CHook::GetHook()->m_bTranspStep)/255) + 0.5)
 			{
 				std::basic_stringstream<TCHAR>ss;
 				ss<<ii;

@@ -64,7 +64,8 @@ public:
 
 	static CHook* GetHook();
 public:
-	LRESULT ProcessTransp(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
+	LRESULT ProcessTransp( UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct );
+	LRESULT ProcessTransp( UINT uMsg, POINT ptMouseAction, DWORD dwMouseData );
 	LRESULT ProcessTopMost(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);

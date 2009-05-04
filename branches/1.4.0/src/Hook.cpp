@@ -6,7 +6,7 @@
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam);
 
 
-bool tagHotKeyInfo::IsHotKey(PMSLLHOOKSTRUCT lpMouseHookStruct)
+bool tagHotKeyInfo::IsHotKey( PMSLLHOOKSTRUCT lpMouseHookStruct )
 {
 	BOOL fKeyState=HIWORD(GetKeyState(VK_MENU));
 	if((m_fAlt&&!fKeyState)||(!m_fAlt&&fKeyState))
@@ -135,20 +135,33 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 
 	return CallNextHookEx(theHook.m_hMouse,nCode,wParam,lParam);
 }
-LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
+
+LRESULT CHook::ProcessTransp(
+	UINT uMsg,
+	PMSLLHOOKSTRUCT lpMouseHookStruct
+)
 {
-	if(!m_arHotKeyInfo[hkoTransp].IsHotKey(lpMouseHookStruct))
+	return this->ProcessTransp( uMsg, lpMouseHookStruct->pt, lpMouseHookStruct->mouseData );
+}
+
+LRESULT CHook::ProcessTransp(
+	UINT uMsg,
+	POINT ptMouseAction,
+	DWORD dwMouseData
+)
+{
+	if(!m_arHotKeyInfo[hkoTransp].IsHotKey(NULL))
 		return 0;
 	if(!m_arHotKeyInfo[hkoTransp].IsMsg(0,uMsg))
 		return 0;
 
-	HWND hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
+	HWND hWnd=::WindowFromPoint( ptMouseAction );
 	if((hWnd=GetPopup(hWnd))==0)
 		return 0;
 
 	if((GetWindowLong(hWnd,GWL_EXSTYLE)&WS_EX_LAYERED)==0)
 	{
-		if(((short)HIWORD(lpMouseHookStruct->mouseData))>0)
+		if(((short)HIWORD(dwMouseData))>0)
 			return 0;
 
 		std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
@@ -182,7 +195,7 @@ LRESULT CHook::ProcessTransp(UINT uMsg,PMSLLHOOKSTRUCT lpMouseHookStruct)
 		}
 	}
 	BYTE bAlpha=m_mapWndInfo[hWnd].bAlpha;
-	if(((short)HIWORD(lpMouseHookStruct->mouseData))<0)
+	if(((short)HIWORD( dwMouseData ))<0)
 	{
 		if(bAlpha>=(m_bMinTranspVal+m_bTranspStep))
 			bAlpha-=m_bTranspStep;
