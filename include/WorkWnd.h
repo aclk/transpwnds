@@ -68,4 +68,6 @@ protected:
 	void OnAbout(WORD,HWND);
 	
 	void OnQuit(WORD,HWND);
+
+	LRESULT OnTouchPadMousewheel(WPARAM wParam,LPARAM lParam);
 };
