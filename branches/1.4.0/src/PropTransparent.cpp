@@ -1,5 +1,5 @@
 #include "../Include/PropTransparent.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 
 CPropTransparent::CPropTransparent(void):
 	CULPropPage(),

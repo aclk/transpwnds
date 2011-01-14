@@ -1,11 +1,14 @@
 #include "../Include/PropSystem.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include "../Include/UpdateProgressDlg.h"
 
 CPropSystem::CPropSystem(void):
 	CULPropPage()	
 {
 	MessageMap.AddCommand<CPropSystem>(IDC_BUTTON_CHECKNOW,&CPropSystem::OnBtnCheckNow);
+
+	MessageMap.AddCommand<CPropSystem>(IDC_RADIO_SIZE_PROGRAM,&CPropSystem::OnRadioSizeMethod);
+	MessageMap.AddCommand<CPropSystem>(IDC_RADIO_SIZE_SYSTEM,&CPropSystem::OnRadioSizeMethod);
 }
 
 CPropSystem::~CPropSystem(void)
@@ -31,7 +34,33 @@ LRESULT CPropSystem::OnInitDialog(WPARAM w,LPARAM l)
 		SendDlgItemMessage(IDC_RADIO_ATSTARTANDEVERY24HOURS,BM_SETCHECK,(WPARAM)1,0);	
 		break;
 	}
-	
+
+	switch(CHook::GetHook()->m_MoveMethod)
+	{
+	case msmProgram:
+		SendDlgItemMessage(IDC_RADIO_MOVE_PROGRAM,BM_SETCHECK,(WPARAM)1,0);
+		break;
+	case msmSystem:
+		SendDlgItemMessage(IDC_RADIO_MOVE_SYSTEM,BM_SETCHECK,(WPARAM)1,0);
+		break;
+	}
+
+	m_comboSizeMethodBy.Attach(GetDlgItem(IDC_COMBO_SIZE_METHOD));
+	m_comboSizeMethodBy.AddString(CULStrTable(IDS_SIZE_METHOD_BY_CORNER));
+	m_comboSizeMethodBy.AddString(CULStrTable(IDS_SIZE_METHOD_BY_BORDER));
+	m_comboSizeMethodBy.SetCurSel((int)CHook::GetHook()->m_SizeMethodBy);
+
+	switch(CHook::GetHook()->m_SizeMethod)
+	{
+	case msmProgram:
+		SendDlgItemMessage(IDC_RADIO_SIZE_PROGRAM,BM_SETCHECK,(WPARAM)1,0);
+		m_comboSizeMethodBy.EnableWindow(FALSE);
+		break;
+	case msmSystem:
+		SendDlgItemMessage(IDC_RADIO_SIZE_SYSTEM,BM_SETCHECK,(WPARAM)1,0);		
+		break;
+	}
+
 	return CULPropPage::OnInitDialog(w,l);
 }
 
@@ -49,6 +78,22 @@ LRESULT CPropSystem::OnApply(BYTE nReturn)
 			else
 				if(SendDlgItemMessage(IDC_RADIO_ATSTARTANDEVERY24HOURS,BM_GETCHECK,0,0))
 					m_UpdateType=utAtStartEvery24;
+
+	
+	if(SendDlgItemMessage(IDC_RADIO_MOVE_PROGRAM,BM_GETCHECK,0,0))
+		CHook::GetHook()->m_MoveMethod=msmProgram;
+	else
+		if(SendDlgItemMessage(IDC_RADIO_MOVE_SYSTEM,BM_GETCHECK,0,0))
+			CHook::GetHook()->m_MoveMethod=msmSystem;
+
+	if(SendDlgItemMessage(IDC_RADIO_SIZE_PROGRAM,BM_GETCHECK,0,0))
+		CHook::GetHook()->m_SizeMethod=msmProgram;
+	else
+		if(SendDlgItemMessage(IDC_RADIO_SIZE_SYSTEM,BM_GETCHECK,0,0))
+			CHook::GetHook()->m_SizeMethod=msmSystem;
+
+	CHook::GetHook()->m_SizeMethodBy=(enSizeMethodBy)m_comboSizeMethodBy.GetCurSel();
+
 	return CULPropPage::OnApply(nReturn);
 }
 
@@ -56,4 +101,12 @@ void CPropSystem::OnBtnCheckNow(WORD,HWND)
 {
 	CUpdateProgressDlg dlg;
 	dlg.CreateModal(IDD_DIALOG_UPDATEPROGRESS,*this);
+}
+
+void CPropSystem::OnRadioSizeMethod(WORD,HWND)
+{
+	if(SendDlgItemMessage(IDC_RADIO_SIZE_PROGRAM,BM_GETCHECK,0,0))
+		m_comboSizeMethodBy.EnableWindow(FALSE);
+	else
+		m_comboSizeMethodBy.EnableWindow(TRUE);
 }

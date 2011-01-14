@@ -124,7 +124,21 @@ void CWorkWnd::LoadSettings()
 		CHook::GetHook()->m_arHotKeyInfo[hkoToggleCaption].m_uMsg[0]=(BOOL)dwVal;
 	else
 		CHook::GetHook()->m_arHotKeyInfo[hkoToggleCaption].m_uMsg[0]=WM_RBUTTONDOWN;
-
+	//загрузка параметра метода перемещения окна
+	if(m_ProfileReg.GetProfileInt(_T("MoveSize"),_T("MoveMethod"),&dwVal))
+		CHook::GetHook()->m_MoveMethod=(enMoveSizeMethod)dwVal;
+	else
+		CHook::GetHook()->m_MoveMethod=msmProgram;
+	//загрузка параметра метода изменения размера окна
+	if(m_ProfileReg.GetProfileInt(_T("MoveSize"),_T("SizeMethod"),&dwVal))
+		CHook::GetHook()->m_SizeMethod=(enMoveSizeMethod)dwVal;
+	else
+		CHook::GetHook()->m_SizeMethod=msmProgram;
+	//загрузка параметра метода изменения размера окна
+	if(m_ProfileReg.GetProfileInt(_T("MoveSize"),_T("SizeMethodBy"),&dwVal))
+		CHook::GetHook()->m_SizeMethodBy=(enSizeMethodBy)dwVal;
+	else
+		CHook::GetHook()->m_SizeMethodBy=smbCorner;	
 	//загрузка параметров изменения прозрачности
 	if(m_ProfileReg.GetProfileInt(_T("TranspVals"),_T("MinTranspVal"),&dwVal))
 		CHook::GetHook()->m_bMinTranspVal=(BOOL)dwVal;
@@ -223,6 +237,18 @@ void CWorkWnd::SaveSettings()
 		CHook::GetHook()->m_arHotKeyInfo[hkoToggleCaption].m_fWin);
 	m_ProfileReg.WriteProfileInt(_T("HotKeys"),_T("ToggleCaptionMsg"),
 		CHook::GetHook()->m_arHotKeyInfo[hkoToggleCaption].m_uMsg[0]);
+
+	//сохранение параметра метода перемещения окна
+	m_ProfileReg.WriteProfileInt(_T("MoveSize"),_T("MoveMethod"),
+		CHook::GetHook()->m_MoveMethod);
+
+	//сохранение параметра метода изменения размера окна
+	m_ProfileReg.WriteProfileInt(_T("MoveSize"),_T("SizeMethod"),
+		CHook::GetHook()->m_SizeMethod);
+
+	//сохранение параметра метода изменения размера окна
+	m_ProfileReg.WriteProfileInt(_T("MoveSize"),_T("SizeMethodBy"),
+		CHook::GetHook()->m_SizeMethodBy);
 
 	m_ProfileReg.WriteProfileInt(_T("TranspVals"),_T("MinTranspVal"),
 		CHook::GetHook()->m_bMinTranspVal);

@@ -1,6 +1,6 @@
 #include "../Include/Hook.h"
 #include "../Include/WorkWnd.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include "../Include/PropHotKeys.h"
 #include "../Include/PropSystem.h"
 #include "../Include/PropTransparent.h"
@@ -11,6 +11,8 @@
 #include<sstream>
 
 #include "../Include/AboutDlg.h"
+
+#define TOUCHPAD 
 
 
 CWorkWnd::CWorkWnd(void):
@@ -95,8 +97,9 @@ LRESULT CWorkWnd::OnCreate(WPARAM,LPARAM)
 
 	m_ProfileReg.SetRegistryKey(CULStrTable(IDS_COMPANY_NAME),CULStrTable(IDS_APP_NAME));
 	LoadSettings();
-
-	SetTranspWndsHookForTouchpad( m_hWnd );
+#ifdef TOUCHPAD
+	SetTranspWndsHookForTouchpad(m_hWnd);
+#endif
 
 	CHook::GetHook()->Enable();
 
@@ -322,17 +325,15 @@ void CWorkWnd::OnAbout(WORD,HWND)
 void CWorkWnd::OnQuit(WORD,HWND)
 {
 	CHook::GetHook()->Restore();
-	UnSetTranspWndsHookForTouchpad();
+#ifdef TOUCHPAD
+	ASSERT(UnSetTranspWndsHookForTouchpad());
+#endif
 	DestroyWindow();
 }
 
-LRESULT CWorkWnd::OnTouchPadMousewheel(
-	WPARAM wParam,
-	LPARAM lParam
-)
+LRESULT CWorkWnd::OnTouchPadMousewheel(WPARAM wParam,LPARAM lParam)
 {
 	POINT pt = { LOWORD(lParam), HIWORD(lParam) };
 	CHook::GetHook()->ProcessTransp( WM_MOUSEWHEEL, pt, GET_WHEEL_DELTA_WPARAM(wParam) );
-
 	return 0;
 }

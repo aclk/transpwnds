@@ -2,6 +2,7 @@
 #include "../Include/Hook.h"
 #include "../Include/WorkWnd.h"
 
+#include "../TranspWndsHKH/Include/TranspWndsHKH.h"
 
 LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam);
 
@@ -45,6 +46,11 @@ CHook::CHook(void):
 	m_arHotKeyInfo[hkoThroughClick].m_fAlt=TRUE;
 	m_arHotKeyInfo[hkoThroughClick].m_fCtrl=TRUE;
 	m_arHotKeyInfo[hkoThroughClick].m_fShift=TRUE;
+
+	m_arHotKeyInfo[hkoCollapseWnd].m_fAlt=TRUE;
+	m_arHotKeyInfo[hkoCollapseWnd].m_fCtrl=TRUE;
+	m_arHotKeyInfo[hkoCollapseWnd].m_fShift=TRUE;
+	m_arHotKeyInfo[hkoCollapseWnd].m_uMsg[0]=WM_LBUTTONDOWN;
 }
 
 CHook::~CHook(void)
@@ -129,10 +135,15 @@ LRESULT CALLBACK MouseProc(int nCode,WPARAM wParam,LPARAM lParam)
 	lRes=theHook.ProcessToggleCaption((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
 	if(lRes)
 		return lRes;
+/*	//не сделал еще :)
 	lRes=theHook.ProcessThroughClick((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
 	if(lRes)
 		return lRes;
-
+*/
+	lRes=theHook.ProcessCollapseWnd((UINT)wParam,(PMSLLHOOKSTRUCT)lParam);
+	if(lRes)
+		return lRes;
+	 
 	return CallNextHookEx(theHook.m_hMouse,nCode,wParam,lParam);
 }
 
@@ -264,29 +275,30 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	static bool fStartMoveWnd=false;
 	static POINT ptStart={0,0};
 	static HWND hWnd=NULL;
-
-	if(fStartMoveWnd&&m_arHotKeyInfo[hkoMoveWnd].IsMsg(1,uMsg))
+	if(m_MoveMethod==msmProgram)
 	{
-		RECT rc;
-		::GetWindowRect(hWnd,&rc);
-		int nWidth=rc.right-rc.left;
-		int nHeight=rc.bottom-rc.top;
-		rc.left+=lpMouseHookStruct->pt.x-ptStart.x;
-		rc.top+=lpMouseHookStruct->pt.y-ptStart.y;
-		::MoveWindow(hWnd,rc.left,rc.top,nWidth,nHeight,TRUE);
-		ptStart.x=lpMouseHookStruct->pt.x;
-		ptStart.y=lpMouseHookStruct->pt.y;
+		if(fStartMoveWnd&&m_arHotKeyInfo[hkoMoveWnd].IsMsg(1,uMsg))
+		{
+			RECT rc;
+			::GetWindowRect(hWnd,&rc);
+			int nWidth=rc.right-rc.left;
+			int nHeight=rc.bottom-rc.top;
+			rc.left+=lpMouseHookStruct->pt.x-ptStart.x;
+			rc.top+=lpMouseHookStruct->pt.y-ptStart.y;
+			::MoveWindow(hWnd,rc.left,rc.top,nWidth,nHeight,TRUE);
+			ptStart.x=lpMouseHookStruct->pt.x;
+			ptStart.y=lpMouseHookStruct->pt.y;
+		}
+		else
+			fStartMoveWnd=false;
+		
+		if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg)&&fStartMoveWnd)
+		{
+			fStartMoveWnd=false;
+			RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+			return 0;
+		}
 	}
-	else
-		fStartMoveWnd=false;
-	
-	if(m_arHotKeyInfo[hkoMoveWnd].IsMsg(2,uMsg)&&fStartMoveWnd)
-	{
-		fStartMoveWnd=false;
-		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-		return 0;
-	}
-
 	if(!m_arHotKeyInfo[hkoMoveWnd].IsHotKey(lpMouseHookStruct))
 		return 0;
 	if(!m_arHotKeyInfo[hkoMoveWnd].IsMsg(0,uMsg))
@@ -294,8 +306,13 @@ LRESULT CHook::ProcessMoveWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
 	if((hWnd=GetPopup(hWnd))==0)
 		return 0;
+	
+	if(m_MoveMethod==msmSystem)
+		SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE+9,0);
+
 	fStartMoveWnd=true;
 	ptStart=lpMouseHookStruct->pt;
+
 	return 1;
 }
 
@@ -304,29 +321,31 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	static bool fStartSizeWnd=false;
 	static POINT ptStart={0,0};
 	static HWND hWnd=NULL;
-
-	if(fStartSizeWnd&&m_arHotKeyInfo[hkoSizeWnd].IsMsg(1,uMsg))
+	if(m_SizeMethod==msmProgram)
 	{
-		RECT rc;
-		::GetWindowRect(hWnd,&rc);
-		int nWidth=rc.right-rc.left;
-		int nHeight=rc.bottom-rc.top;
-		nWidth+=lpMouseHookStruct->pt.x-ptStart.x;
-		nHeight+=lpMouseHookStruct->pt.y-ptStart.y;
-		::MoveWindow(hWnd,rc.left,rc.top,nWidth,nHeight,TRUE);
-		ptStart.x=lpMouseHookStruct->pt.x;
-		ptStart.y=lpMouseHookStruct->pt.y;
+		if(fStartSizeWnd&&m_arHotKeyInfo[hkoSizeWnd].IsMsg(1,uMsg))
+		{
+			RECT rc;
+			::GetWindowRect(hWnd,&rc);
+			int nWidth=rc.right-rc.left;
+			int nHeight=rc.bottom-rc.top;
+			nWidth+=lpMouseHookStruct->pt.x-ptStart.x;
+			nHeight+=lpMouseHookStruct->pt.y-ptStart.y;
+			::MoveWindow(hWnd,rc.left,rc.top,nWidth,nHeight,TRUE);
+			ptStart.x=lpMouseHookStruct->pt.x;
+			ptStart.y=lpMouseHookStruct->pt.y;			
+		}
+		else
+			fStartSizeWnd=false;
+		
+		if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg)&&fStartSizeWnd)
+		{
+			RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+			fStartSizeWnd=false;
+			
+			return 0;
+		}
 	}
-	else
-		fStartSizeWnd=false;
-	
-	if(m_arHotKeyInfo[hkoSizeWnd].IsMsg(2,uMsg)&&fStartSizeWnd)
-	{
-		RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
-		fStartSizeWnd=false;
-		return 0;
-	}
-
 	if(!m_arHotKeyInfo[hkoSizeWnd].IsHotKey(lpMouseHookStruct))
 		return 0;
 	if(!m_arHotKeyInfo[hkoSizeWnd].IsMsg(0,uMsg))
@@ -334,7 +353,59 @@ LRESULT CHook::ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 	hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
 	if((hWnd=GetPopup(hWnd))==0)
 		return 0;
+
+	
+
 	fStartSizeWnd=true;
+	
+	if(m_SizeMethod==msmSystem)
+	{
+		RECT rc;
+		::GetWindowRect(hWnd,&rc);
+		int nWidth=rc.right-rc.left;
+		int nHeight=rc.bottom-rc.top;
+		int x=lpMouseHookStruct->pt.x-rc.left;
+		int y=lpMouseHookStruct->pt.y-rc.top;
+
+		if(m_SizeMethodBy==smbCorner)
+		{
+			if(y<nHeight/2)
+			{
+				if(x<nWidth/2)
+					SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_TOPLEFT,0);
+				else
+					SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_TOPRIGHT,0);
+			}
+			else
+			{
+				if(x<nWidth/2)
+					SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_BOTTOMLEFT,0);
+				else
+					SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_BOTTOMRIGHT,0);
+			}
+		}
+		else
+		{
+			int deltaLeft=x;
+			int deltaRight=nWidth-x;
+			int deltaTop=y;
+			int deltaBottom=nHeight-y;
+
+			if((deltaLeft<deltaRight)&&(deltaLeft<deltaTop)&&
+				(deltaLeft<deltaBottom))
+				SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_LEFT,0);
+			else
+				if((deltaRight<deltaTop)&&
+					(deltaRight<deltaBottom))
+					SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_RIGHT,0);
+				else
+					if(deltaTop<deltaBottom)
+						SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_TOP,0);
+					else
+						SendMessage(hWnd,WM_SYSCOMMAND,SC_SIZE|WMSZ_BOTTOM,0);
+		}
+	}
+
 	ptStart=lpMouseHookStruct->pt;
 	return 1;
 }
@@ -381,6 +452,104 @@ LRESULT CHook::ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct
 		}
 	}
 	RedrawWindow(hWnd,NULL,NULL,RDW_ERASE | RDW_INVALIDATE | RDW_FRAME | RDW_ALLCHILDREN);
+	return 1;
+}
+
+LRESULT CHook::ProcessCollapseWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
+{
+	if(!m_arHotKeyInfo[hkoCollapseWnd].IsHotKey(lpMouseHookStruct))
+		return 0;
+	if(!m_arHotKeyInfo[hkoCollapseWnd].IsMsg(0,uMsg))
+		return 0;
+	HWND hWnd=::WindowFromPoint(lpMouseHookStruct->pt);
+	if((hWnd=GetPopup(hWnd))==0)
+		return 0;
+	RECT rc;
+	GetWindowRect(hWnd,&rc);
+
+	std::map<HWND,CHook::WNDINFO>::const_iterator iterItem=m_mapWndInfo.find(hWnd);
+	if(iterItem==m_mapWndInfo.end())
+	{
+		CHook::WNDINFO wi={0};
+		m_mapWndInfo[hWnd]=wi;
+	}
+//	if((GetWindowLong(hWnd,GWL_STYLE)&WS_MINIMIZE)==0)
+//		m_mapWndInfo[hWnd].dwNonCollapseHeight=0;
+
+	if(m_mapWndInfo[hWnd].dwNonCollapseHeight==0)
+	{
+//		SetWindowLong(hWnd,GWL_STYLE,GetWindowLong(hWnd,GWL_STYLE)|WS_ICONIC);
+//		CloseWindow(hWnd);
+//		SetWindowLong(hWnd,GWL_STYLE,GetWindowLong(hWnd,GWL_STYLE)|WS_MINIMIZE);
+//		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+//			20,SWP_NOZORDER|SWP_NOMOVE|SWP_FRAMECHANGED);
+		
+//		ShowWindow(hWnd,SW_SHOWMINNOACTIVE);
+//		SetWindowLong(hWnd,GWL_STYLE,GetWindowLong(hWnd,GWL_STYLE)|WS_VISIBLE);
+//		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+//			20,SWP_NOZORDER|SWP_NOMOVE|SWP_NOSIZE|SWP_FRAMECHANGED);
+//		if(IsWindowEnabled(hWnd))
+//			MessageBeep(MB_ICONASTERISK);
+//		SetActiveWindow(hWnd);
+		WINDOWPLACEMENT wp;
+		wp.length=sizeof(wp);
+		wp.flags=WPF_RESTORETOMAXIMIZED;
+		wp.ptMaxPosition.x=0;
+		wp.ptMaxPosition.y=0;
+		wp.rcNormalPosition.left=rc.left;
+		wp.rcNormalPosition.top=rc.top;
+		wp.rcNormalPosition.right=rc.right;
+		wp.rcNormalPosition.bottom=100;//rc.top+30;
+		wp.showCmd=SW_SHOWNORMAL;
+//		SetWindowPlacement(hWnd,&wp);
+		
+//		SendMessage(hWnd,WM_SIZE,SIZE_RESTORED,MAKELPARAM(rc.right-rc.left,0));
+		//rc.bottom=900;
+//		SendMessage(hWnd,WM_NCCALCSIZE,FALSE,(LPARAM)&rc);
+		
+//		SetWindowPlacement(hWnd,&wp);
+
+//		SetWindowLong(hWnd,GWL_STYLE,GetWindowLong(hWnd,GWL_STYLE)|WS_VISIBLE);
+		SIZE sz={rc.right-rc.left,26};
+//		EnableBlockSize(hWnd,sz,TRUE);
+//		SetWindowPlacement(hWnd,&wp);
+		RECT rcClient;
+		GetClientRect(hWnd,&rcClient);
+		ValidateRect(hWnd,&rcClient);
+
+		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+			26,SWP_NOZORDER|SWP_NOMOVE|SWP_NOSENDCHANGING|SWP_NOACTIVATE);
+		
+//		EnableBlockSize(hWnd,sz,FALSE);
+
+			//GetWindowRect(hWnd,&rc);
+//			if((rc.right-rc.left)>50)
+//				MessageBeep(1);
+/*		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,26,
+			SWP_NOZORDER|SWP_NOMOVE|SWP_FRAMECHANGED|SWP_NOACTIVATE);
+
+		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+			26,SWP_NOZORDER|SWP_NOMOVE|SWP_NOSENDCHANGING|SWP_NOACTIVATE);
+*/
+
+		m_mapWndInfo[hWnd].dwNonCollapseHeight=rc.bottom-rc.top;
+	}
+	else
+	{
+		SIZE sz={0,0};
+//		EnableBlockSize(hWnd,sz,FALSE);
+		//ShowWindow(hWnd,SW_RESTORE);
+		SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+			m_mapWndInfo[hWnd].dwNonCollapseHeight,SWP_NOZORDER|SWP_NOMOVE|SWP_NOSENDCHANGING|SWP_NOACTIVATE);
+
+	/*		SetWindowLong(hWnd,GWL_STYLE,GetWindowLong(hWnd,GWL_STYLE)&~WS_ICONIC);
+			SetWindowPos(hWnd,NULL,0,0,rc.right-rc.left,
+				rc.bottom-rc.top,SWP_NOZORDER|SWP_NOMOVE|SWP_FRAMECHANGED);
+				*/
+		m_mapWndInfo[hWnd].dwNonCollapseHeight=0;
+	}
+
+
 	return 1;
 }
 
@@ -497,3 +666,6 @@ LRESULT CHook::ProcessThroughClick(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct)
 //	::SetFocus(hwndNext);
 	return 1;
 }
+/////////////////////окончание функций сквозного клика
+
+

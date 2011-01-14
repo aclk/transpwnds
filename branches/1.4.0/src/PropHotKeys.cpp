@@ -1,5 +1,5 @@
 #include "../Include/PropHotKeys.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 CPropHotKeys::CPropHotKeys(void):
 	CULPropPage()
 {
@@ -40,7 +40,7 @@ LRESULT CPropHotKeys::OnInitDialog(WPARAM w,LPARAM l)
 		cbTopMost.SetItemData(nItem,WM_LBUTTONDOWN);
 		nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_COMBO_RBTN));
 		cbTopMost.SetItemData(nItem,WM_RBUTTONDOWN);
-		nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
+		nItem=cbTopMost.AddString(CULStrTable(IDS_OPTOINS_COMBO_MBTN));
 		cbTopMost.SetItemData(nItem,WM_MBUTTONDOWN);
 		for(int i=0;i<cbTopMost.GetCount();++i)
 			if(m_arHotkey[hkoTopMost].IsMsg(0,cbTopMost.GetItemData(i)))
@@ -118,7 +118,7 @@ LRESULT CPropHotKeys::OnInitDialog(WPARAM w,LPARAM l)
 		cbToggleCaption.SetItemData(nItem,WM_LBUTTONDOWN);
 		nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_COMBO_RBTN));
 		cbToggleCaption.SetItemData(nItem,WM_RBUTTONDOWN);
-		nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_TOPMOST_COMBO_MBTN));
+		nItem=cbToggleCaption.AddString(CULStrTable(IDS_OPTOINS_COMBO_MBTN));
 		cbToggleCaption.SetItemData(nItem,WM_MBUTTONDOWN);
 		for(int i=0;i<cbToggleCaption.GetCount();++i)
 			if(m_arHotkey[hkoToggleCaption].IsMsg(0,cbToggleCaption.GetItemData(i)))
