@@ -1,5 +1,5 @@
 #include "../Include/Updater.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include <string>
 #include <sstream>
 
@@ -26,6 +26,7 @@ BOOL CUpdater::GetLastVersion(int arVer[constSectionSize])
 	DWORD dwBytesRead;
 	DWORD dwBytesCounter=0;
 	bool fEnd=false;
+	int offsetSearch=0;
 	std::string strContent;
 	::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unConnect,TRUE);
 	::SendMessage(m_hwndNotify,m_uMsg,(WPARAM)unRecieveData,0);
@@ -37,45 +38,54 @@ BOOL CUpdater::GetLastVersion(int arVer[constSectionSize])
 		strContent+=szData;
 		dwBytesCounter+=dwBytesRead;
 		::SendMessage(m_hwndNotify,m_uMsg,(WPARAM)unRecieveData,(LPARAM)dwBytesCounter);
-		std::string::size_type nPos=strContent.find("version");
-		if(nPos!=std::string::npos)
+		std::string::size_type nPos=strContent.find("version",offsetSearch);
+		if((nPos!=std::string::npos)&&((strContent.size()-nPos)>=sizeof("version xx.xx.xx")))
 		{
-			std::string::size_type nPosEnd=strContent.find(10,nPos);
-			if(nPosEnd!=std::string::npos)
-			{
-				std::string strVersion;
-				strVersion.append(strContent,nPos,nPosEnd-nPos);
-				if(strVersion.size()>=(sizeof("version x.x.x")-1))
+			std::string::size_type nPosEnd=0;			
+			if((nPosEnd=strContent.find('.',nPos))==std::string::npos)
+				offsetSearch=nPos+sizeof("version xx.xx.xx");
+			else
+				if((nPosEnd=strContent.find('.',nPosEnd+1))==std::string::npos)
+					offsetSearch=nPos+sizeof("version xx.xx.xx");
+				else
 				{
-					nPos=sizeof("version");
-					bool fEndParseVersion=true;
-					for(int i=0;i<constSectionSize;++i)
-					{
-						std::string strSec;
-						nPosEnd=strVersion.find('.',nPos);
-						if(nPosEnd)
+					std::string strVersion;
+					strVersion.append(strContent,nPos,nPosEnd+4-nPos);
+					if(
+						(strVersion.size()>=(sizeof("version x.x.x")-1))
+						&&
+						(strVersion.size()<=(sizeof("version xx.xx.xx")-1))
+						)
+					{ 
+						nPos=sizeof("version");
+						bool fEndParseVersion=true;
+						for(int i=0;i<constSectionSize;++i)
 						{
-							strSec.append(strVersion,nPos,nPosEnd-nPos);
-							std::stringstream ss;
-							ss<<strSec;
-							ss>>m_arLastVer[i];
-							nPos=nPosEnd+1;
+							std::string strSec;
+							nPosEnd=strVersion.find('.',nPos);
+							if(nPosEnd)
+							{
+								strSec.append(strVersion,nPos,nPosEnd-nPos);
+								std::stringstream ss;
+								ss<<strSec;
+								ss>>m_arLastVer[i];
+								nPos=nPosEnd+1;
+							}
+							else
+							{
+								::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)FALSE);
+								fEndParseVersion=false;
+								break;
+							}
 						}
-						else
+						if(fEndParseVersion)
 						{
-							::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)FALSE);
-							fEndParseVersion=false;
-							break;
+							::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)TRUE);
+							::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unLastVersion,(LPARAM)m_arLastVer);
+							fEnd=true;
 						}
-					}
-					if(fEndParseVersion)
-					{
-						::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unParseData,(LPARAM)TRUE);
-						::PostMessage(m_hwndNotify,m_uMsg,(WPARAM)unLastVersion,(LPARAM)m_arLastVer);
-						fEnd=true;
 					}
 				}
-			}
 		}
 	}
 

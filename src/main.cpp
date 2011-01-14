@@ -2,7 +2,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include <assert.h>
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include <map>
 
 LRESULT CALLBACK WindowProc(HWND hwnd,UINT uMsg,WPARAM wParam,LPARAM lParam);

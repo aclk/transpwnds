@@ -1,5 +1,5 @@
 #include "../Include/PropSheetOptions.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 
 CPropSheetOptions::CPropSheetOptions(void)
 {

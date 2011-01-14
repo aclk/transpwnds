@@ -1,6 +1,6 @@
 #include "../Include/UpdateProgressDlg.h"
 #include "../Include/Updater.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include "../Include/WorkWnd.h"
 #include <sstream>
 

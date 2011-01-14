@@ -2,7 +2,7 @@
 #include "../Include/Hook.h"
 
 #include "../Include/ViewingWndsDlg.h"
-#include "../Include/resource.h"
+#include "../res/resource.h"
 #include <sstream>
 
 CViewingWndsDlg::CViewingWndsDlg(void):
@@ -45,8 +45,6 @@ LRESULT CViewingWndsDlg::OnInitDialog(WPARAM w,LPARAM l)
 	RECT rc;
 	GetClientRect(&rc);
 	m_listctrlViewingWnds.SetColumnWidth(4,rc.right-nColWidth-30);
-
-
 	InitList();
 	return CULDlg::OnInitDialog(w,l);
 }

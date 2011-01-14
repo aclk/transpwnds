@@ -24,7 +24,20 @@ enum enHotKeyOperations
 	hkoSizeWnd,
 	hkoToggleCaption,
 	hkoThroughClick,
+	hkoCollapseWnd,
 	hkoCount
+};
+
+enum enMoveSizeMethod
+{
+	msmProgram,
+	msmSystem
+};
+
+enum enSizeMethodBy
+{
+	smbCorner,
+	msmBorder
 };
 
 class CHook
@@ -37,23 +50,26 @@ public:
 	///\param fAlpha - TRUE,если окну был присвоен стиль WS_EX_LAYERED 
 	///\param fTopMost - TRUE,если окну был присвоен стиль WS_EX_TOPMOST 
 	///\param dwStyle - стиль окна,если у окна был убран заголовок, иначе 0
+	///\param dwNonCollapseHeight - высота окна до свёртывания высоты
 	typedef struct tagWndInfo
 	{
 		BYTE bAlpha;
 		BOOL fAlpha;
 		BOOL fTopMost;
 		DWORD dwStyle;
+		DWORD dwNonCollapseHeight;
 	}WNDINFO,*LPWNDINFO;
 	///\brief мап окно - информация о нём
 	std::map<HWND,WNDINFO> m_mapWndInfo;
-
-
-
 
 	HOTKEYINFO m_arHotKeyInfo[hkoCount];
 
 	BYTE m_bMinTranspVal;
 	BYTE m_bTranspStep;
+
+	enMoveSizeMethod m_MoveMethod;
+	enMoveSizeMethod m_SizeMethod;
+	enSizeMethodBy m_SizeMethodBy;
 public:
 	CHook(void);
 	~CHook(void);
@@ -71,4 +87,6 @@ public:
 	LRESULT ProcessSizeWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessToggleCaption(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 	LRESULT ProcessThroughClick(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
+	///\brief функция обработки свёртывания окна
+	LRESULT ProcessCollapseWnd(UINT uMsg, PMSLLHOOKSTRUCT lpMouseHookStruct);
 };
