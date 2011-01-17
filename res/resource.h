@@ -11,6 +11,7 @@
 #define IDD_PROPPAGE_SYSTEM                     107
 #define IDD_PROPPAGE_OSD                        108
 #define IDR_MENU1                               109
+#define IDC_STATIC_SENDMSG                      1000
 #define IDC_CHECK_TRANSP_ALT                    1001
 #define IDC_RADIO_SIZE_PROGRAM                  1001
 #define IDC_CHECK_TRANSP_CTRL                   1002

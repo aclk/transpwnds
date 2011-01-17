@@ -78,6 +78,23 @@ LRESULT CPropSystem::OnInitDialog(WPARAM w,LPARAM l)
 		break;
 	}
 
+
+	m_hyperlinkSendMsg.Attach(GetDlgItem(IDC_STATIC_SENDMSG),_T("mailto:unclelab@gmail.com"));
+
+
+	m_hyperlinkSendMsg.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tDefault,
+		ULWnds::ULControls::ULButtons::CULHyperLink::sNone,RGB(0,0,255));
+	m_hyperlinkSendMsg.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tHiLite,
+		ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine,RGB(0,0,255));
+	m_hyperlinkSendMsg.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tDown,
+		ULWnds::ULControls::ULButtons::CULHyperLink::enStyles
+		((int)ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine),RGB(64,0,255));
+	m_hyperlinkSendMsg.SetStyles(ULWnds::ULControls::ULButtons::CULHyperLink::tVisited,
+		ULWnds::ULControls::ULButtons::CULHyperLink::enStyles
+		((int)ULWnds::ULControls::ULButtons::CULHyperLink::sUnderLine),RGB(128,0,255));
+
+
+
 	return CULPropPage::OnInitDialog(w,l);
 }
 

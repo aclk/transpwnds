@@ -29,7 +29,7 @@
 
 #include "../Include/AboutDlg.h"
 
-#define TOUCHPAD 
+//#define TOUCHPAD 
 
 
 CWorkWnd::CWorkWnd(void):
