@@ -43,7 +43,7 @@ CAPTION "About TranspWnds"
 FONT 8, "MS Shell Dlg", 0, 0, 1
 {
     ICON            IDI_MAINICON, IDC_STATIC, 11, 13, 21, 20, SS_ICON
-    LTEXT           "TranspWnds Version 1.4.0", IDC_STATIC, 40, 9, 85, 8, SS_LEFT | SS_NOPREFIX
+    LTEXT           "TranspWnds Version 1.4.1", IDC_STATIC, 40, 9, 85, 8, SS_LEFT | SS_NOPREFIX
     LTEXT           "Copyright © UncleLab, 2010", IDC_STATIC, 40, 19, 91, 8, SS_LEFT
     DEFPUSHBUTTON   "OK", IDOK, 178, 7, 50, 16, WS_GROUP
     LTEXT           "Homepage:", IDC_STATIC, 40, 29, 38, 8, SS_LEFT
@@ -139,22 +139,23 @@ STYLE DS_CENTER | DS_SHELLFONT | WS_CAPTION | WS_CHILDWINDOW | WS_DISABLED
 CAPTION "System"
 FONT 8, "MS Shell Dlg", 0, 0, 0
 {
-    GROUPBOX        "AutoRun", IDC_STATIC, 7, 7, 214, 22
-    AUTOCHECKBOX    "Run on Windows startup", IDC_CHECK_AUTORUN, 13, 17, 95, 10
-    GROUPBOX        "Updates", IDC_STATIC, 7, 31, 214, 89
-    AUTORADIOBUTTON "Never check for updates", IDC_RADIO_NEVER, 34, 42, 152, 10, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
-    AUTORADIOBUTTON "Check for updates at startup program", IDC_RADIO_ATSTART, 34, 56, 152, 10, BS_LEFTTEXT
-    AUTORADIOBUTTON "Check for updates  every 24 hours", IDC_RADIO_EVERY24HOURS, 34, 69, 152, 15, BS_LEFTTEXT | BS_MULTILINE
-    AUTORADIOBUTTON "Check for updates at startup programs and every 24 hours", IDC_RADIO_ATSTARTANDEVERY24HOURS, 34, 82, 152, 20, BS_LEFTTEXT | BS_MULTILINE
-    LTEXT           "Check for updates", IDC_STATIC, 34, 104, 60, 8, NOT WS_GROUP | SS_LEFT
-    PUSHBUTTON      "Now", IDC_BUTTON_CHECKNOW, 151, 102, 34, 11, BS_FLAT
-    GROUPBOX        "Move method", IDC_STATIC, 7, 124, 214, 24
-    AUTORADIOBUTTON "Program", IDC_RADIO_MOVE_PROGRAM, 33, 135, 42, 8, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
-    AUTORADIOBUTTON "System", IDC_RADIO_MOVE_SYSTEM, 142, 135, 39, 8, BS_LEFTTEXT
-    GROUPBOX        "Size method", IDC_STATIC, 8, 147, 213, 27
-    AUTORADIOBUTTON "Program", IDC_RADIO_SIZE_PROGRAM, 27, 159, 42, 8, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
-    AUTORADIOBUTTON "System", IDC_RADIO_SIZE_SYSTEM, 85, 159, 39, 8, BS_LEFTTEXT
-    COMBOBOX        IDC_COMBO_SIZE_METHOD, 142, 156, 59, 30, WS_TABSTOP | WS_TABSTOP | CBS_DROPDOWN | CBS_HASSTRINGS
+    GROUPBOX        "AutoRun", IDC_STATIC, 7, 3, 214, 22
+    AUTOCHECKBOX    "Run on Windows startup", IDC_CHECK_AUTORUN, 13, 12, 95, 10
+    GROUPBOX        "Updates", IDC_STATIC, 7, 26, 214, 89
+    AUTORADIOBUTTON "Never check for updates", IDC_RADIO_NEVER, 34, 37, 152, 10, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
+    AUTORADIOBUTTON "Check for updates at startup program", IDC_RADIO_ATSTART, 34, 51, 152, 10, BS_LEFTTEXT
+    AUTORADIOBUTTON "Check for updates  every 24 hours", IDC_RADIO_EVERY24HOURS, 34, 64, 152, 15, BS_LEFTTEXT | BS_MULTILINE
+    AUTORADIOBUTTON "Check for updates at startup programs and every 24 hours", IDC_RADIO_ATSTARTANDEVERY24HOURS, 34, 77, 152, 20, BS_LEFTTEXT | BS_MULTILINE
+    LTEXT           "Check for updates", IDC_STATIC, 34, 99, 60, 8, NOT WS_GROUP | SS_LEFT
+    PUSHBUTTON      "Now", IDC_BUTTON_CHECKNOW, 151, 97, 34, 11, BS_FLAT
+    GROUPBOX        "Move method", IDC_STATIC, 7, 131, 214, 24
+    AUTORADIOBUTTON "Program", IDC_RADIO_MOVE_PROGRAM, 33, 142, 42, 8, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
+    AUTORADIOBUTTON "System", IDC_RADIO_MOVE_SYSTEM, 142, 142, 39, 8, BS_LEFTTEXT
+    GROUPBOX        "Size method", IDC_STATIC, 8, 154, 213, 27
+    AUTORADIOBUTTON "Program", IDC_RADIO_SIZE_PROGRAM, 27, 166, 42, 8, WS_GROUP | WS_TABSTOP | BS_LEFTTEXT
+    AUTORADIOBUTTON "System", IDC_RADIO_SIZE_SYSTEM, 85, 166, 39, 8, BS_LEFTTEXT
+    COMBOBOX        IDC_COMBO_SIZE_METHOD, 142, 163, 59, 30, WS_TABSTOP | WS_TABSTOP | CBS_DROPDOWN | CBS_HASSTRINGS
+    CTEXT           "Send a message to the author", IDC_STATIC_SENDMSG, 10, 120, 209, 8, SS_CENTER | SS_NOTIFY
 }
 
 
@@ -241,8 +242,8 @@ IDI_MAINICON       ICON           "Win32Wiz.ico"
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 VS_VERSION_INFO VERSIONINFO
-    FILEVERSION     1,4,0,0
-    PRODUCTVERSION  1,4,0,0
+    FILEVERSION     1,4,1,0
+    PRODUCTVERSION  1,4,1,0
     FILEOS          VOS__WINDOWS32
     FILETYPE        VFT_UNKNOWN
     FILESUBTYPE     VFT2_UNKNOWN
@@ -255,12 +256,12 @@ VS_VERSION_INFO VERSIONINFO
         {
             VALUE "CompanyName", "UncleLab"
             VALUE "FileDescription", "TranspWnd"
-            VALUE "FileVersion", "1.4.0"
+            VALUE "FileVersion", "1.4.1"
             VALUE "InternalName", "TranspWnd"
             VALUE "LegalCopyright", "Copyright (C) 2011"
             VALUE "OriginalFilename", "TranspWnd"
             VALUE "ProductName", " TranspWnd"
-            VALUE "ProductVersion", "1.4.0"
+            VALUE "ProductVersion", "1.4.1"
         }
     }
     BLOCK "VarFileInfo"

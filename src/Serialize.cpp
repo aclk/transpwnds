@@ -165,6 +165,9 @@ void CWorkWnd::LoadSettings()
 		CHook::GetHook()->m_bTranspStep=(BYTE)dwVal;
 	else
 		CHook::GetHook()->m_bTranspStep=10;
+	//если вдруг m_bTranspStep стала равна 0
+	if(CHook::GetHook()->m_bTranspStep==0)
+		CHook::GetHook()->m_bTranspStep=10;
 	//загрузка параметров позиционирования OSD окна
 	if(m_ProfileReg.GetProfileInt(_T("OSD"),_T("Align"),&dwVal))
 		m_osdWnd.SetPos((COSDWnd::enOSDPos)dwVal);

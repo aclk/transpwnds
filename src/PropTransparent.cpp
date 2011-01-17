@@ -52,7 +52,7 @@ LRESULT CPropTransparent::OnInitDialog(WPARAM w,LPARAM l)
 
 	m_sliderTranspLevelStep.SetRange(1,m_nMinTransparentLevel/2);
 	m_sliderTranspLevelStep.SetTicFreq(((m_nMinTransparentLevel/2)>20)?2:1);
-	m_sliderTranspLevelStep.SetPos(m_nMinTransparentLevel);
+	m_sliderTranspLevelStep.SetPos(m_nTransparentLevelStep);
 
 	return CULPropPage::OnInitDialog(w,l);
 }
