@@ -34,6 +34,8 @@ public:
 	enUpdateType m_UpdateType;
 
 	CULComboBox m_comboSizeMethodBy;
+
+	CULHyperLink m_hyperlinkSendMsg;
 public:
 	CPropSystem(void);
 	~CPropSystem(void);
@@ -41,5 +43,5 @@ protected:
 	virtual LRESULT OnInitDialog(WPARAM,LPARAM);
 	virtual LRESULT OnApply(BYTE nReturn);
 	void OnBtnCheckNow(WORD,HWND);
-	void OnRadioSizeMethod(WORD,HWND);
+	void OnRadioSizeMethod(WORD,HWND);	
 };
